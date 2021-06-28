@@ -1,0 +1,1 @@
+bindgen --use-core --size_t-is-usize --ctypes-prefix super::raw wrapper.h -o src/bindings.rs -- -I"port" -I"port/esp32" -I"dep/esp-idf/components/xtensa/esp32/include" -I"dep/esp-idf/components/xtensa/include" -I"dep/FreeRTOS-Kernel/include" --sysroot=../../tools/gcc/xtensa-esp32-elf -target mipsel-none-none-elf -DXTRUNTIME_H -DXTOS_RESTORE_JUST_INTLEVEL=
