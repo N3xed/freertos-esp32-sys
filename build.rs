@@ -9,7 +9,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let manifest_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
     let freertos_kernel_dir = format!("{}/dep/FreeRTOS-Kernel", manifest_dir);
-    let esp_idf_dir = format!("{}/dep/esp-idf", manifest_dir);
+    let xtensa_dir = format!("{}/dep/xtensa", manifest_dir);
 
     let mut b = build_freertos::Builder::new();
 
@@ -22,16 +22,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                                           // 'FreeRTOS-Kernel/portable/MemMang' (Default: heap_4.c)
 
     b.get_cc()
-        .include(&format!("{}/components/xtensa/include", esp_idf_dir))
-        .include(&format!("{}/components/xtensa/esp32/include", esp_idf_dir))
+        .include(&format!("{}/include", xtensa_dir))
+        .include(&format!("{}/esp32/include", xtensa_dir))
         .flag("-mlongcalls");
 
     b.compile()
         .or_else(|e| Err(anyhow!("FreeRTOS compilation failed: {}", e.to_string())))?;
 
     println!(
-        "cargo:rustc-link-search={}/components/xtensa/esp32",
-        esp_idf_dir
+        "cargo:rustc-link-search={}/esp32",
+        xtensa_dir
     );
     println!("cargo:rustc-link-lib=xt_hal");
 
