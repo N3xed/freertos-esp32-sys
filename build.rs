@@ -22,14 +22,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                                           // 'FreeRTOS-Kernel/portable/MemMang' (Default: heap_4.c)
 
     b.get_cc()
-        .compiler(&format!(
-            "{}/../../tools/gcc/bin/xtensa-esp32-elf-gcc.exe",
-            manifest_dir
-        ))
-        .archiver(&format!(
-            "{}/../../tools/gcc/bin/xtensa-esp32-elf-ar.exe",
-            manifest_dir
-        ))
         .include(&format!("{}/components/xtensa/include", esp_idf_dir))
         .include(&format!("{}/components/xtensa/esp32/include", esp_idf_dir))
         .flag("-mlongcalls");

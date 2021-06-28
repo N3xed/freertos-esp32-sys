@@ -3,6 +3,11 @@
 This library is based on [FreeRTOS-rust](https://github.com/lobaro/FreeRTOS-rust).
 The bindings were generated using [bindgen](https://crates.io/crates/bindgen).
 
+## Building
+
+This crate uses [cc](https://github.com/alexcrichton/cc-rs) to compile the C and assembly
+code. Please look at its documentation to configure compiler and archiver paths.
+
 ## License
 
 Licensed under either of
