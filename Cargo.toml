@@ -3,7 +3,7 @@ name = "freertos-esp32-sys"
 version = "0.1.0"
 edition = "2018"
 authors = ["Dominik Gschwind <dominik.gschwind99@gmail.com>"]
-license = "MIT"
+license = "MIT or Apache-2.0"
 
 [dependencies]
 
