@@ -15,5 +15,4 @@ use-rust-alloc = []
 [build-dependencies]
 walkdir = "2.3.2"
 cc = "1.0.68"
-cmd_lib = "1.1.0"
 script-utils = { version = "*", git = "https://github.com/N3xed/script-utils.git" }

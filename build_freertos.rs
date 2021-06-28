@@ -1,8 +1,7 @@
 use cc::Build;
 use script_utils::{anyhow, Error};
-use std::fmt::Display;
+use std::env;
 use std::path::{Path, PathBuf};
-use std::{any, env, fmt};
 use walkdir::WalkDir;
 
 #[derive(Clone, Debug)]
@@ -108,6 +107,7 @@ impl Builder {
     /// Set the heap_?.c file to use from the "/portable/MemMang/" folder.
     /// heap_1.c ... heap_5.c (Default: heap_4.c)
     /// see also: https://www.freertos.org/a00111.html
+    #[allow(dead_code)]
     pub fn heap(&mut self, file_name: String) {
         self.heap_c = Some(file_name);
     }
