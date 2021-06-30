@@ -1,5 +1,5 @@
+use anyhow::{anyhow, Error};
 use cc::Build;
-use script_utils::{anyhow, Error};
 use std::env;
 use std::path::{Path, PathBuf};
 use walkdir::WalkDir;

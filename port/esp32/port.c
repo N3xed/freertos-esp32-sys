@@ -30,7 +30,6 @@
 
 #include <stdlib.h>
 #include <xtensa/config/core.h>
-#include <string.h>
 
 #include "xtensa_rtos.h"
 
@@ -58,19 +57,16 @@ unsigned port_interruptNesting = 0; // Interrupt nesting level
 /*-----------------------------------------------------------*/
 
 /**
- * @brief Set the `PS.INTLEVEL` special register to `intlevel` and return the state of the
- * whole `PS` register before the write.
- * 
+ * @brief Set the `PS.INTLEVEL` special register to `intlevel` and return the
+ * state of the whole `PS` register before the write.
+ *
  * @param intlevel The new interrupt level.
- * @return The value of the `PS` special register before the new intlevel was set.
+ * @return The value of the `PS` special register before the new intlevel was
+ * set.
  */
 unsigned _xtos_set_intlevel(int intlevel) {
-  unsigned state;
-  __asm__ volatile("RSR.PS %0 \n"
-               "WSR.PS %1 \n"
-               : "=a"(state)
-               : "r"((intlevel & 0xf))
-               : "memory");
+  unsigned state = intlevel & 0xf;
+  __asm__ volatile("XSR.PS %0" : "+a"(state) : : "memory");
   return state;
 }
 
@@ -94,6 +90,10 @@ StackType_t *pxPortInitialiseStack(StackType_t *pxTopOfStack,
 
 #if XCHAL_CP_NUM > 0
   uint32_t *p;
+#endif
+  
+#if portUSING_MPU_WRAPPERS
+  (void)(xRunPrivileged);
 #endif
 
   /* Create interrupt stack frame aligned to 16 byte boundary */
@@ -216,6 +216,7 @@ void vPortStoreTaskMPUSettings(xMPU_SETTINGS *xMPUSettings,
                                const struct xMEMORY_REGION *const xRegions,
                                StackType_t *pxBottomOfStack,
                                uint32_t ulStackDepth) {
+  (void)(xRegions);
 #if XCHAL_CP_NUM > 0
   xMPUSettings->coproc_area =
       (StackType_t *)((uint32_t)(pxBottomOfStack + ulStackDepth - 1));

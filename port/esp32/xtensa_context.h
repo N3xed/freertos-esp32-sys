@@ -98,46 +98,46 @@
 */
 
 STRUCT_BEGIN
-STRUCT_FIELD (long, 4, XT_STK_EXIT,     exit) /* exit point for dispatch */
-STRUCT_FIELD (long, 4, XT_STK_PC,       pc)   /* return PC */
-STRUCT_FIELD (long, 4, XT_STK_PS,       ps)   /* return PS */
-STRUCT_FIELD (long, 4, XT_STK_A0,       a0)
-STRUCT_FIELD (long, 4, XT_STK_A1,       a1)   /* stack pointer before interrupt */
-STRUCT_FIELD (long, 4, XT_STK_A2,       a2)
-STRUCT_FIELD (long, 4, XT_STK_A3,       a3)
-STRUCT_FIELD (long, 4, XT_STK_A4,       a4)
-STRUCT_FIELD (long, 4, XT_STK_A5,       a5)
-STRUCT_FIELD (long, 4, XT_STK_A6,       a6)
-STRUCT_FIELD (long, 4, XT_STK_A7,       a7)
-STRUCT_FIELD (long, 4, XT_STK_A8,       a8)
-STRUCT_FIELD (long, 4, XT_STK_A9,       a9)
-STRUCT_FIELD (long, 4, XT_STK_A10,      a10)
-STRUCT_FIELD (long, 4, XT_STK_A11,      a11)
-STRUCT_FIELD (long, 4, XT_STK_A12,      a12)
-STRUCT_FIELD (long, 4, XT_STK_A13,      a13)
-STRUCT_FIELD (long, 4, XT_STK_A14,      a14)
-STRUCT_FIELD (long, 4, XT_STK_A15,      a15)
-STRUCT_FIELD (long, 4, XT_STK_SAR,      sar)
-STRUCT_FIELD (long, 4, XT_STK_EXCCAUSE, exccause)
-STRUCT_FIELD (long, 4, XT_STK_EXCVADDR, excvaddr)
+STRUCT_FIELD (uint32_t, 4, XT_STK_EXIT,     exit) /* exit point for dispatch */
+STRUCT_FIELD (uint32_t, 4, XT_STK_PC,       pc)   /* return PC */
+STRUCT_FIELD (uint32_t, 4, XT_STK_PS,       ps)   /* return PS */
+STRUCT_FIELD (uint32_t, 4, XT_STK_A0,       a0)
+STRUCT_FIELD (uint32_t, 4, XT_STK_A1,       a1)   /* stack pointer before interrupt */
+STRUCT_FIELD (uint32_t, 4, XT_STK_A2,       a2)
+STRUCT_FIELD (uint32_t, 4, XT_STK_A3,       a3)
+STRUCT_FIELD (uint32_t, 4, XT_STK_A4,       a4)
+STRUCT_FIELD (uint32_t, 4, XT_STK_A5,       a5)
+STRUCT_FIELD (uint32_t, 4, XT_STK_A6,       a6)
+STRUCT_FIELD (uint32_t, 4, XT_STK_A7,       a7)
+STRUCT_FIELD (uint32_t, 4, XT_STK_A8,       a8)
+STRUCT_FIELD (uint32_t, 4, XT_STK_A9,       a9)
+STRUCT_FIELD (uint32_t, 4, XT_STK_A10,      a10)
+STRUCT_FIELD (uint32_t, 4, XT_STK_A11,      a11)
+STRUCT_FIELD (uint32_t, 4, XT_STK_A12,      a12)
+STRUCT_FIELD (uint32_t, 4, XT_STK_A13,      a13)
+STRUCT_FIELD (uint32_t, 4, XT_STK_A14,      a14)
+STRUCT_FIELD (uint32_t, 4, XT_STK_A15,      a15)
+STRUCT_FIELD (uint32_t, 4, XT_STK_SAR,      sar)
+STRUCT_FIELD (uint32_t, 4, XT_STK_EXCCAUSE, exccause)
+STRUCT_FIELD (uint32_t, 4, XT_STK_EXCVADDR, excvaddr)
 #if XCHAL_HAVE_LOOPS
-STRUCT_FIELD (long, 4, XT_STK_LBEG,   lbeg)
-STRUCT_FIELD (long, 4, XT_STK_LEND,   lend)
-STRUCT_FIELD (long, 4, XT_STK_LCOUNT, lcount)
+STRUCT_FIELD (uint32_t, 4, XT_STK_LBEG,   lbeg)
+STRUCT_FIELD (uint32_t, 4, XT_STK_LEND,   lend)
+STRUCT_FIELD (uint32_t, 4, XT_STK_LCOUNT, lcount)
 #endif
 #ifndef __XTENSA_CALL0_ABI__
 /* Temporary space for saving stuff during window spill */
-STRUCT_FIELD (long, 4, XT_STK_TMP0,   tmp0)
-STRUCT_FIELD (long, 4, XT_STK_TMP1,   tmp1)
-STRUCT_FIELD (long, 4, XT_STK_TMP2,   tmp2)
+STRUCT_FIELD (uint32_t, 4, XT_STK_TMP0,   tmp0)
+STRUCT_FIELD (uint32_t, 4, XT_STK_TMP1,   tmp1)
+STRUCT_FIELD (uint32_t, 4, XT_STK_TMP2,   tmp2)
 #endif
 #ifdef XT_USE_SWPRI
 /* Storage for virtual priority mask */
-STRUCT_FIELD (long, 4, XT_STK_VPRI,   vpri)
+STRUCT_FIELD (uint32_t, 4, XT_STK_VPRI,   vpri)
 #endif
 #ifdef XT_USE_OVLY
 /* Storage for overlay state */
-STRUCT_FIELD (long, 4, XT_STK_OVLY,   ovly)
+STRUCT_FIELD (uint32_t, 4, XT_STK_OVLY,   ovly)
 #endif
 STRUCT_END(XtExcFrame)
 

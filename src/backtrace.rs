@@ -19,7 +19,7 @@ impl core::fmt::Display for BacktraceFrame {
 
 impl BacktraceFrame {
     /// Check if `pc` and `sp` are sane.
-    /// 
+    ///
     /// Checks if the stack pointer is located in dram (data ram) and if the program
     /// counter is in an executable memory space.
     ///
@@ -119,11 +119,11 @@ pub struct Backtrace {
     pc: u32,
     sp: u32,
     next_pc: u32,
-    last: bool
+    last: bool,
 }
 
 impl Backtrace {
-    /// Create a new backtrace 
+    /// Create a new backtrace
     ///
     /// Given the following function call flow (B -> A -> Backtrace::new)
     /// this function will do the following.
@@ -135,7 +135,7 @@ impl Backtrace {
             pc: 0,
             sp: 0,
             next_pc: 0,
-            last: false
+            last: false,
         };
         unsafe {
             super::esp_backtrace_get_start(
@@ -187,7 +187,7 @@ impl core::iter::Iterator for Backtrace {
             pc: self.get_real_pc(),
             sp: self.sp,
         };
-        
+
         if res.is_sane() {
             self.next_stack_frame();
         } else {

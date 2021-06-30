@@ -1,13 +1,14 @@
-use crate::raw;
+use chlorine::c_char;
 
 #[cfg(feature = "use-rust-alloc")]
 mod malloc_impl {
-    use crate::raw;
     use core::alloc::Layout;
     use core::mem;
 
+    use chlorine::c_void;
+
     #[no_mangle]
-    unsafe extern "C" fn vPortFree(ptr: *mut raw::c_void) {
+    unsafe extern "C" fn vPortFree(ptr: *mut c_void) {
         if ptr != core::ptr::null_mut() {
             let ptr = ptr.sub(mem::size_of::<usize>());
             // get block size
@@ -18,7 +19,7 @@ mod malloc_impl {
     }
 
     #[no_mangle]
-    unsafe extern "C" fn pvPortMalloc(wanted_size: usize) -> *mut raw::c_void {
+    unsafe extern "C" fn pvPortMalloc(wanted_size: usize) -> *mut c_void {
         if wanted_size == 0 {
             return core::ptr::null_mut();
         }
@@ -40,10 +41,10 @@ mod malloc_impl {
 
 #[no_mangle]
 unsafe extern "C" fn vPortPanic(
-    file: *const raw::c_char,
+    file: *const c_char,
     file_len: usize,
     line: usize,
-    func: *const raw::c_char,
+    func: *const c_char,
     func_len: usize,
 ) {
     let file = if file_len == 0 {
@@ -62,7 +63,7 @@ unsafe extern "C" fn vPortPanic(
 #[no_mangle]
 unsafe extern "C" fn vApplicationStackOverflowHook(
     _task: super::TaskHandle_t,
-    task_name: *mut raw::c_char,
+    task_name: *mut c_char,
 ) {
     let len = super::strlen(task_name);
     let task_name = if len == 0 {

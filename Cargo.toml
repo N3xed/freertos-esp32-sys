@@ -6,6 +6,7 @@ authors = ["Dominik Gschwind <dominik.gschwind99@gmail.com>"]
 license = "MIT or Apache-2.0"
 
 [dependencies]
+chlorine = "1.0"
 
 [features]
 default = ["use-rust-alloc"]
@@ -15,4 +16,4 @@ use-rust-alloc = []
 [build-dependencies]
 walkdir = "2.3.2"
 cc = "1.0.68"
-script-utils = { version = "*", git = "https://github.com/N3xed/script-utils.git" }
+anyhow = "1.0.41"

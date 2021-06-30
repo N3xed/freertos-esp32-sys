@@ -1703,7 +1703,7 @@ pub const configENABLE_FPU: u32 = 1;
 pub const configENABLE_TRUSTZONE: u32 = 1;
 pub const configRUN_FREERTOS_SECURE_ONLY: u32 = 0;
 pub const configRUN_ADDITIONAL_TESTS: u32 = 0;
-pub const tskKERNEL_VERSION_NUMBER: &'static [u8; 9usize] = b"V10.4.4+\0";
+pub const tskKERNEL_VERSION_NUMBER: &'static [u8; 8usize] = b"V10.4.4\0";
 pub const tskKERNEL_VERSION_MAJOR: u32 = 10;
 pub const tskKERNEL_VERSION_MINOR: u32 = 4;
 pub const tskKERNEL_VERSION_BUILD: u32 = 4;
@@ -1731,13 +1731,13 @@ pub type int_least8_t = i8;
 pub type uint_least8_t = u8;
 pub type int_fast8_t = i8;
 pub type uint_fast8_t = u8;
-pub type intmax_t = super::raw::c_longlong;
-pub type uintmax_t = super::raw::c_ulonglong;
-pub type wchar_t = super::raw::c_int;
+pub type intmax_t = chlorine::c_longlong;
+pub type uintmax_t = chlorine::c_ulonglong;
+pub type wchar_t = chlorine::c_int;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct max_align_t {
-    pub __clang_max_align_nonce1: super::raw::c_longlong,
+    pub __clang_max_align_nonce1: chlorine::c_longlong,
     pub __clang_max_align_nonce2: f64,
 }
 #[test]
@@ -1778,172 +1778,169 @@ fn bindgen_test_layout_max_align_t() {
     );
 }
 extern "C" {
-    pub static Xthal_rev_no: super::raw::c_uint;
+    pub static Xthal_rev_no: chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_save_extra(base: *mut super::raw::c_void);
+    pub fn xthal_save_extra(base: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_restore_extra(base: *mut super::raw::c_void);
+    pub fn xthal_restore_extra(base: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_save_cpregs(base: *mut super::raw::c_void, arg1: super::raw::c_int);
+    pub fn xthal_save_cpregs(base: *mut chlorine::c_void, arg1: chlorine::c_int);
 }
 extern "C" {
-    pub fn xthal_restore_cpregs(base: *mut super::raw::c_void, arg1: super::raw::c_int);
+    pub fn xthal_restore_cpregs(base: *mut chlorine::c_void, arg1: chlorine::c_int);
 }
 extern "C" {
-    pub fn xthal_save_cp0(base: *mut super::raw::c_void);
+    pub fn xthal_save_cp0(base: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_save_cp1(base: *mut super::raw::c_void);
+    pub fn xthal_save_cp1(base: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_save_cp2(base: *mut super::raw::c_void);
+    pub fn xthal_save_cp2(base: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_save_cp3(base: *mut super::raw::c_void);
+    pub fn xthal_save_cp3(base: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_save_cp4(base: *mut super::raw::c_void);
+    pub fn xthal_save_cp4(base: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_save_cp5(base: *mut super::raw::c_void);
+    pub fn xthal_save_cp5(base: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_save_cp6(base: *mut super::raw::c_void);
+    pub fn xthal_save_cp6(base: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_save_cp7(base: *mut super::raw::c_void);
+    pub fn xthal_save_cp7(base: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_restore_cp0(base: *mut super::raw::c_void);
+    pub fn xthal_restore_cp0(base: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_restore_cp1(base: *mut super::raw::c_void);
+    pub fn xthal_restore_cp1(base: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_restore_cp2(base: *mut super::raw::c_void);
+    pub fn xthal_restore_cp2(base: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_restore_cp3(base: *mut super::raw::c_void);
+    pub fn xthal_restore_cp3(base: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_restore_cp4(base: *mut super::raw::c_void);
+    pub fn xthal_restore_cp4(base: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_restore_cp5(base: *mut super::raw::c_void);
+    pub fn xthal_restore_cp5(base: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_restore_cp6(base: *mut super::raw::c_void);
+    pub fn xthal_restore_cp6(base: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_restore_cp7(base: *mut super::raw::c_void);
+    pub fn xthal_restore_cp7(base: *mut chlorine::c_void);
 }
 extern "C" {
-    pub static mut Xthal_cpregs_save_fn: [*mut super::raw::c_void; 8usize];
+    pub static mut Xthal_cpregs_save_fn: [*mut chlorine::c_void; 8usize];
 }
 extern "C" {
-    pub static mut Xthal_cpregs_restore_fn: [*mut super::raw::c_void; 8usize];
+    pub static mut Xthal_cpregs_restore_fn: [*mut chlorine::c_void; 8usize];
 }
 extern "C" {
-    pub static mut Xthal_cpregs_save_nw_fn: [*mut super::raw::c_void; 8usize];
+    pub static mut Xthal_cpregs_save_nw_fn: [*mut chlorine::c_void; 8usize];
 }
 extern "C" {
-    pub static mut Xthal_cpregs_restore_nw_fn: [*mut super::raw::c_void; 8usize];
+    pub static mut Xthal_cpregs_restore_nw_fn: [*mut chlorine::c_void; 8usize];
 }
 extern "C" {
-    pub static Xthal_extra_size: super::raw::c_uint;
+    pub static Xthal_extra_size: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_extra_align: super::raw::c_uint;
+    pub static Xthal_extra_align: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_cpregs_size: [super::raw::c_uint; 8usize];
+    pub static Xthal_cpregs_size: [chlorine::c_uint; 8usize];
 }
 extern "C" {
-    pub static Xthal_cpregs_align: [super::raw::c_uint; 8usize];
+    pub static Xthal_cpregs_align: [chlorine::c_uint; 8usize];
 }
 extern "C" {
-    pub static Xthal_all_extra_size: super::raw::c_uint;
+    pub static Xthal_all_extra_size: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_all_extra_align: super::raw::c_uint;
+    pub static Xthal_all_extra_align: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_cp_names: [*const super::raw::c_char; 8usize];
+    pub static Xthal_cp_names: [*const chlorine::c_char; 8usize];
 }
 extern "C" {
-    pub fn xthal_init_mem_extra(arg1: *mut super::raw::c_void);
+    pub fn xthal_init_mem_extra(arg1: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_init_mem_cp(arg1: *mut super::raw::c_void, arg2: super::raw::c_int);
+    pub fn xthal_init_mem_cp(arg1: *mut chlorine::c_void, arg2: chlorine::c_int);
 }
 extern "C" {
-    pub static Xthal_num_coprocessors: super::raw::c_uint;
+    pub static Xthal_num_coprocessors: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_cp_num: super::raw::c_uchar;
+    pub static Xthal_cp_num: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_cp_max: super::raw::c_uchar;
+    pub static Xthal_cp_max: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_cp_mask: super::raw::c_uint;
+    pub static Xthal_cp_mask: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_num_aregs: super::raw::c_uint;
+    pub static Xthal_num_aregs: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_num_aregs_log2: super::raw::c_uchar;
+    pub static Xthal_num_aregs_log2: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_icache_linewidth: super::raw::c_uchar;
+    pub static Xthal_icache_linewidth: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_dcache_linewidth: super::raw::c_uchar;
+    pub static Xthal_dcache_linewidth: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_icache_linesize: super::raw::c_ushort;
+    pub static Xthal_icache_linesize: chlorine::c_ushort;
 }
 extern "C" {
-    pub static Xthal_dcache_linesize: super::raw::c_ushort;
+    pub static Xthal_dcache_linesize: chlorine::c_ushort;
 }
 extern "C" {
-    pub static Xthal_icache_size: super::raw::c_uint;
+    pub static Xthal_icache_size: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_dcache_size: super::raw::c_uint;
+    pub static Xthal_dcache_size: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_dcache_is_writeback: super::raw::c_uchar;
+    pub static Xthal_dcache_is_writeback: chlorine::c_uchar;
 }
 extern "C" {
-    pub fn xthal_icache_region_invalidate(addr: *mut super::raw::c_void, size: super::raw::c_uint);
+    pub fn xthal_icache_region_invalidate(addr: *mut chlorine::c_void, size: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_dcache_region_invalidate(addr: *mut super::raw::c_void, size: super::raw::c_uint);
+    pub fn xthal_dcache_region_invalidate(addr: *mut chlorine::c_void, size: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_dcache_region_writeback(addr: *mut super::raw::c_void, size: super::raw::c_uint);
+    pub fn xthal_dcache_region_writeback(addr: *mut chlorine::c_void, size: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_dcache_region_writeback_inv(
-        addr: *mut super::raw::c_void,
-        size: super::raw::c_uint,
-    );
+    pub fn xthal_dcache_region_writeback_inv(addr: *mut chlorine::c_void, size: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_icache_line_invalidate(addr: *mut super::raw::c_void);
+    pub fn xthal_icache_line_invalidate(addr: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_dcache_line_invalidate(addr: *mut super::raw::c_void);
+    pub fn xthal_dcache_line_invalidate(addr: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_dcache_line_writeback(addr: *mut super::raw::c_void);
+    pub fn xthal_dcache_line_writeback(addr: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_dcache_line_writeback_inv(addr: *mut super::raw::c_void);
+    pub fn xthal_dcache_line_writeback_inv(addr: *mut chlorine::c_void);
 }
 extern "C" {
     pub fn xthal_icache_sync();
@@ -1952,16 +1949,16 @@ extern "C" {
     pub fn xthal_dcache_sync();
 }
 extern "C" {
-    pub fn xthal_icache_get_ways() -> super::raw::c_uint;
+    pub fn xthal_icache_get_ways() -> chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_icache_set_ways(ways: super::raw::c_uint);
+    pub fn xthal_icache_set_ways(ways: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_dcache_get_ways() -> super::raw::c_uint;
+    pub fn xthal_dcache_get_ways() -> chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_dcache_set_ways(ways: super::raw::c_uint);
+    pub fn xthal_dcache_set_ways(ways: chlorine::c_uint);
 }
 extern "C" {
     pub fn xthal_cache_coherence_on();
@@ -1976,136 +1973,136 @@ extern "C" {
     pub fn xthal_cache_coherence_optout();
 }
 extern "C" {
-    pub fn xthal_get_cache_prefetch() -> super::raw::c_int;
+    pub fn xthal_get_cache_prefetch() -> chlorine::c_int;
 }
 extern "C" {
-    pub fn xthal_set_cache_prefetch(arg1: super::raw::c_int) -> super::raw::c_int;
+    pub fn xthal_set_cache_prefetch(arg1: chlorine::c_int) -> chlorine::c_int;
 }
 extern "C" {
-    pub fn xthal_set_cache_prefetch_long(arg1: super::raw::c_ulonglong) -> super::raw::c_int;
+    pub fn xthal_set_cache_prefetch_long(arg1: chlorine::c_ulonglong) -> chlorine::c_int;
 }
 extern "C" {
-    pub static Xthal_debug_configured: super::raw::c_int;
+    pub static Xthal_debug_configured: chlorine::c_int;
 }
 extern "C" {
-    pub fn xthal_set_soft_break(addr: *mut super::raw::c_void) -> super::raw::c_uint;
+    pub fn xthal_set_soft_break(addr: *mut chlorine::c_void) -> chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_remove_soft_break(addr: *mut super::raw::c_void, arg1: super::raw::c_uint);
+    pub fn xthal_remove_soft_break(addr: *mut chlorine::c_void, arg1: chlorine::c_uint);
 }
 extern "C" {
     pub fn xthal_disassemble(
-        instr_buf: *mut super::raw::c_uchar,
-        tgt_addr: *mut super::raw::c_void,
-        buffer: *mut super::raw::c_char,
-        buflen: super::raw::c_uint,
-        options: super::raw::c_uint,
-    ) -> super::raw::c_int;
+        instr_buf: *mut chlorine::c_uchar,
+        tgt_addr: *mut chlorine::c_void,
+        buffer: *mut chlorine::c_char,
+        buflen: chlorine::c_uint,
+        options: chlorine::c_uint,
+    ) -> chlorine::c_int;
 }
 extern "C" {
-    pub fn xthal_disassemble_size(instr_buf: *mut super::raw::c_uchar) -> super::raw::c_int;
+    pub fn xthal_disassemble_size(instr_buf: *mut chlorine::c_uchar) -> chlorine::c_int;
 }
 extern "C" {
     pub fn xthal_memcpy(
-        dst: *mut super::raw::c_void,
-        src: *const super::raw::c_void,
-        len: super::raw::c_uint,
-    ) -> *mut super::raw::c_void;
+        dst: *mut chlorine::c_void,
+        src: *const chlorine::c_void,
+        len: chlorine::c_uint,
+    ) -> *mut chlorine::c_void;
 }
 extern "C" {
     pub fn xthal_bcopy(
-        src: *const super::raw::c_void,
-        dst: *mut super::raw::c_void,
-        len: super::raw::c_uint,
-    ) -> *mut super::raw::c_void;
+        src: *const chlorine::c_void,
+        dst: *mut chlorine::c_void,
+        len: chlorine::c_uint,
+    ) -> *mut chlorine::c_void;
 }
 extern "C" {
     pub fn xthal_compare_and_set(
-        addr: *mut super::raw::c_int,
-        test_val: super::raw::c_int,
-        compare_val: super::raw::c_int,
-    ) -> super::raw::c_int;
+        addr: *mut chlorine::c_int,
+        test_val: chlorine::c_int,
+        compare_val: chlorine::c_int,
+    ) -> chlorine::c_int;
 }
 extern "C" {
-    pub static Xthal_release_major: super::raw::c_uint;
+    pub static Xthal_release_major: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_release_minor: super::raw::c_uint;
+    pub static Xthal_release_minor: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_release_name: *const super::raw::c_char;
+    pub static Xthal_release_name: *const chlorine::c_char;
 }
 extern "C" {
-    pub static Xthal_release_internal: *const super::raw::c_char;
+    pub static Xthal_release_internal: *const chlorine::c_char;
 }
 extern "C" {
-    pub static Xthal_memory_order: super::raw::c_uchar;
+    pub static Xthal_memory_order: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_windowed: super::raw::c_uchar;
+    pub static Xthal_have_windowed: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_density: super::raw::c_uchar;
+    pub static Xthal_have_density: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_booleans: super::raw::c_uchar;
+    pub static Xthal_have_booleans: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_loops: super::raw::c_uchar;
+    pub static Xthal_have_loops: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_nsa: super::raw::c_uchar;
+    pub static Xthal_have_nsa: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_minmax: super::raw::c_uchar;
+    pub static Xthal_have_minmax: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_sext: super::raw::c_uchar;
+    pub static Xthal_have_sext: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_clamps: super::raw::c_uchar;
+    pub static Xthal_have_clamps: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_mac16: super::raw::c_uchar;
+    pub static Xthal_have_mac16: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_mul16: super::raw::c_uchar;
+    pub static Xthal_have_mul16: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_fp: super::raw::c_uchar;
+    pub static Xthal_have_fp: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_speculation: super::raw::c_uchar;
+    pub static Xthal_have_speculation: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_threadptr: super::raw::c_uchar;
+    pub static Xthal_have_threadptr: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_pif: super::raw::c_uchar;
+    pub static Xthal_have_pif: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_num_writebuffer_entries: super::raw::c_ushort;
+    pub static Xthal_num_writebuffer_entries: chlorine::c_ushort;
 }
 extern "C" {
-    pub static Xthal_build_unique_id: super::raw::c_uint;
+    pub static Xthal_build_unique_id: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_hw_configid0: super::raw::c_uint;
+    pub static Xthal_hw_configid0: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_hw_configid1: super::raw::c_uint;
+    pub static Xthal_hw_configid1: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_hw_release_major: super::raw::c_uint;
+    pub static Xthal_hw_release_major: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_hw_release_minor: super::raw::c_uint;
+    pub static Xthal_hw_release_minor: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_hw_release_name: *const super::raw::c_char;
+    pub static Xthal_hw_release_name: *const chlorine::c_char;
 }
 extern "C" {
-    pub static Xthal_hw_release_internal: *const super::raw::c_char;
+    pub static Xthal_hw_release_internal: *const chlorine::c_char;
 }
 extern "C" {
     pub fn xthal_clear_regcached_code();
@@ -2114,268 +2111,262 @@ extern "C" {
     pub fn xthal_window_spill();
 }
 extern "C" {
-    pub fn xthal_validate_cp(arg1: super::raw::c_int);
+    pub fn xthal_validate_cp(arg1: chlorine::c_int);
 }
 extern "C" {
-    pub fn xthal_invalidate_cp(arg1: super::raw::c_int);
+    pub fn xthal_invalidate_cp(arg1: chlorine::c_int);
 }
 extern "C" {
-    pub fn xthal_set_cpenable(arg1: super::raw::c_uint);
+    pub fn xthal_set_cpenable(arg1: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_get_cpenable() -> super::raw::c_uint;
+    pub fn xthal_get_cpenable() -> chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_num_intlevels: super::raw::c_uchar;
+    pub static Xthal_num_intlevels: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_num_interrupts: super::raw::c_uchar;
+    pub static Xthal_num_interrupts: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_excm_level: super::raw::c_uchar;
+    pub static Xthal_excm_level: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_intlevel_mask: [super::raw::c_uint; 16usize];
+    pub static Xthal_intlevel_mask: [chlorine::c_uint; 16usize];
 }
 extern "C" {
-    pub static Xthal_intlevel_andbelow_mask: [super::raw::c_uint; 16usize];
+    pub static Xthal_intlevel_andbelow_mask: [chlorine::c_uint; 16usize];
 }
 extern "C" {
-    pub static Xthal_intlevel: [super::raw::c_uchar; 32usize];
+    pub static Xthal_intlevel: [chlorine::c_uchar; 32usize];
 }
 extern "C" {
-    pub static Xthal_inttype: [super::raw::c_uchar; 32usize];
+    pub static Xthal_inttype: [chlorine::c_uchar; 32usize];
 }
 extern "C" {
-    pub static Xthal_inttype_mask: [super::raw::c_uint; 11usize];
+    pub static Xthal_inttype_mask: [chlorine::c_uint; 11usize];
 }
 extern "C" {
-    pub static Xthal_timer_interrupt: [super::raw::c_int; 4usize];
+    pub static Xthal_timer_interrupt: [chlorine::c_int; 4usize];
 }
 extern "C" {
-    pub fn xthal_get_intenable() -> super::raw::c_uint;
+    pub fn xthal_get_intenable() -> chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_set_intenable(arg1: super::raw::c_uint);
+    pub fn xthal_set_intenable(arg1: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_get_interrupt() -> super::raw::c_uint;
+    pub fn xthal_get_interrupt() -> chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_set_intset(arg1: super::raw::c_uint);
+    pub fn xthal_set_intset(arg1: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_set_intclear(arg1: super::raw::c_uint);
+    pub fn xthal_set_intclear(arg1: chlorine::c_uint);
 }
 extern "C" {
-    pub static Xthal_num_ibreak: super::raw::c_int;
+    pub static Xthal_num_ibreak: chlorine::c_int;
 }
 extern "C" {
-    pub static Xthal_num_dbreak: super::raw::c_int;
+    pub static Xthal_num_dbreak: chlorine::c_int;
 }
 extern "C" {
-    pub static Xthal_have_ccount: super::raw::c_uchar;
+    pub static Xthal_have_ccount: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_num_ccompare: super::raw::c_uchar;
+    pub static Xthal_num_ccompare: chlorine::c_uchar;
 }
 extern "C" {
-    pub fn xthal_get_ccount() -> super::raw::c_uint;
+    pub fn xthal_get_ccount() -> chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_set_ccompare(arg1: super::raw::c_int, arg2: super::raw::c_uint);
+    pub fn xthal_set_ccompare(arg1: chlorine::c_int, arg2: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_get_ccompare(arg1: super::raw::c_int) -> super::raw::c_uint;
+    pub fn xthal_get_ccompare(arg1: chlorine::c_int) -> chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_have_prid: super::raw::c_uchar;
+    pub static Xthal_have_prid: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_exceptions: super::raw::c_uchar;
+    pub static Xthal_have_exceptions: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_xea_version: super::raw::c_uchar;
+    pub static Xthal_xea_version: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_interrupts: super::raw::c_uchar;
+    pub static Xthal_have_interrupts: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_highlevel_interrupts: super::raw::c_uchar;
+    pub static Xthal_have_highlevel_interrupts: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_nmi: super::raw::c_uchar;
+    pub static Xthal_have_nmi: chlorine::c_uchar;
 }
 extern "C" {
-    pub fn xthal_get_prid() -> super::raw::c_uint;
+    pub fn xthal_get_prid() -> chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_vpri_to_intlevel(vpri: super::raw::c_uint) -> super::raw::c_uint;
+    pub fn xthal_vpri_to_intlevel(vpri: chlorine::c_uint) -> chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_intlevel_to_vpri(intlevel: super::raw::c_uint) -> super::raw::c_uint;
+    pub fn xthal_intlevel_to_vpri(intlevel: chlorine::c_uint) -> chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_int_enable(arg1: super::raw::c_uint) -> super::raw::c_uint;
+    pub fn xthal_int_enable(arg1: chlorine::c_uint) -> chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_int_disable(arg1: super::raw::c_uint) -> super::raw::c_uint;
+    pub fn xthal_int_disable(arg1: chlorine::c_uint) -> chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_set_int_vpri(
-        intnum: super::raw::c_int,
-        vpri: super::raw::c_int,
-    ) -> super::raw::c_int;
+    pub fn xthal_set_int_vpri(intnum: chlorine::c_int, vpri: chlorine::c_int) -> chlorine::c_int;
 }
 extern "C" {
-    pub fn xthal_get_int_vpri(intnum: super::raw::c_int) -> super::raw::c_int;
+    pub fn xthal_get_int_vpri(intnum: chlorine::c_int) -> chlorine::c_int;
 }
 extern "C" {
-    pub fn xthal_set_vpri_locklevel(intlevel: super::raw::c_uint);
+    pub fn xthal_set_vpri_locklevel(intlevel: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_get_vpri_locklevel() -> super::raw::c_uint;
+    pub fn xthal_get_vpri_locklevel() -> chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_set_vpri(vpri: super::raw::c_uint) -> super::raw::c_uint;
+    pub fn xthal_set_vpri(vpri: chlorine::c_uint) -> chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_get_vpri() -> super::raw::c_uint;
+    pub fn xthal_get_vpri() -> chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_set_vpri_intlevel(intlevel: super::raw::c_uint) -> super::raw::c_uint;
+    pub fn xthal_set_vpri_intlevel(intlevel: chlorine::c_uint) -> chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_set_vpri_lock() -> super::raw::c_uint;
+    pub fn xthal_set_vpri_lock() -> chlorine::c_uint;
 }
 pub type XtHalVoidFunc = ::core::option::Option<unsafe extern "C" fn()>;
 extern "C" {
-    pub static mut Xthal_tram_pending: super::raw::c_uint;
+    pub static mut Xthal_tram_pending: chlorine::c_uint;
 }
 extern "C" {
-    pub static mut Xthal_tram_enabled: super::raw::c_uint;
+    pub static mut Xthal_tram_enabled: chlorine::c_uint;
 }
 extern "C" {
-    pub static mut Xthal_tram_sync: super::raw::c_uint;
+    pub static mut Xthal_tram_sync: chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_tram_pending_to_service() -> super::raw::c_uint;
+    pub fn xthal_tram_pending_to_service() -> chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_tram_done(serviced_mask: super::raw::c_uint);
+    pub fn xthal_tram_done(serviced_mask: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_tram_set_sync(
-        intnum: super::raw::c_int,
-        sync: super::raw::c_int,
-    ) -> super::raw::c_int;
+    pub fn xthal_tram_set_sync(intnum: chlorine::c_int, sync: chlorine::c_int) -> chlorine::c_int;
 }
 extern "C" {
     pub fn xthal_set_tram_trigger_func(trigger_fn: XtHalVoidFunc) -> XtHalVoidFunc;
 }
 extern "C" {
-    pub static Xthal_num_instrom: super::raw::c_uchar;
+    pub static Xthal_num_instrom: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_num_instram: super::raw::c_uchar;
+    pub static Xthal_num_instram: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_num_datarom: super::raw::c_uchar;
+    pub static Xthal_num_datarom: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_num_dataram: super::raw::c_uchar;
+    pub static Xthal_num_dataram: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_num_xlmi: super::raw::c_uchar;
+    pub static Xthal_num_xlmi: chlorine::c_uchar;
 }
 extern "C" {
-    pub static mut Xthal_instrom_vaddr: [super::raw::c_uint; 0usize];
+    pub static mut Xthal_instrom_vaddr: [chlorine::c_uint; 0usize];
 }
 extern "C" {
-    pub static mut Xthal_instrom_paddr: [super::raw::c_uint; 0usize];
+    pub static mut Xthal_instrom_paddr: [chlorine::c_uint; 0usize];
 }
 extern "C" {
-    pub static mut Xthal_instrom_size: [super::raw::c_uint; 0usize];
+    pub static mut Xthal_instrom_size: [chlorine::c_uint; 0usize];
 }
 extern "C" {
-    pub static mut Xthal_instram_vaddr: [super::raw::c_uint; 0usize];
+    pub static mut Xthal_instram_vaddr: [chlorine::c_uint; 0usize];
 }
 extern "C" {
-    pub static mut Xthal_instram_paddr: [super::raw::c_uint; 0usize];
+    pub static mut Xthal_instram_paddr: [chlorine::c_uint; 0usize];
 }
 extern "C" {
-    pub static mut Xthal_instram_size: [super::raw::c_uint; 0usize];
+    pub static mut Xthal_instram_size: [chlorine::c_uint; 0usize];
 }
 extern "C" {
-    pub static mut Xthal_datarom_vaddr: [super::raw::c_uint; 0usize];
+    pub static mut Xthal_datarom_vaddr: [chlorine::c_uint; 0usize];
 }
 extern "C" {
-    pub static mut Xthal_datarom_paddr: [super::raw::c_uint; 0usize];
+    pub static mut Xthal_datarom_paddr: [chlorine::c_uint; 0usize];
 }
 extern "C" {
-    pub static mut Xthal_datarom_size: [super::raw::c_uint; 0usize];
+    pub static mut Xthal_datarom_size: [chlorine::c_uint; 0usize];
 }
 extern "C" {
-    pub static mut Xthal_dataram_vaddr: [super::raw::c_uint; 0usize];
+    pub static mut Xthal_dataram_vaddr: [chlorine::c_uint; 0usize];
 }
 extern "C" {
-    pub static mut Xthal_dataram_paddr: [super::raw::c_uint; 0usize];
+    pub static mut Xthal_dataram_paddr: [chlorine::c_uint; 0usize];
 }
 extern "C" {
-    pub static mut Xthal_dataram_size: [super::raw::c_uint; 0usize];
+    pub static mut Xthal_dataram_size: [chlorine::c_uint; 0usize];
 }
 extern "C" {
-    pub static mut Xthal_xlmi_vaddr: [super::raw::c_uint; 0usize];
+    pub static mut Xthal_xlmi_vaddr: [chlorine::c_uint; 0usize];
 }
 extern "C" {
-    pub static mut Xthal_xlmi_paddr: [super::raw::c_uint; 0usize];
+    pub static mut Xthal_xlmi_paddr: [chlorine::c_uint; 0usize];
 }
 extern "C" {
-    pub static mut Xthal_xlmi_size: [super::raw::c_uint; 0usize];
+    pub static mut Xthal_xlmi_size: [chlorine::c_uint; 0usize];
 }
 extern "C" {
-    pub static Xthal_icache_setwidth: super::raw::c_uchar;
+    pub static Xthal_icache_setwidth: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_dcache_setwidth: super::raw::c_uchar;
+    pub static Xthal_dcache_setwidth: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_icache_ways: super::raw::c_uint;
+    pub static Xthal_icache_ways: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_dcache_ways: super::raw::c_uint;
+    pub static Xthal_dcache_ways: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_icache_line_lockable: super::raw::c_uchar;
+    pub static Xthal_icache_line_lockable: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_dcache_line_lockable: super::raw::c_uchar;
+    pub static Xthal_dcache_line_lockable: chlorine::c_uchar;
 }
 extern "C" {
-    pub fn xthal_get_cacheattr() -> super::raw::c_uint;
+    pub fn xthal_get_cacheattr() -> chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_get_icacheattr() -> super::raw::c_uint;
+    pub fn xthal_get_icacheattr() -> chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_get_dcacheattr() -> super::raw::c_uint;
+    pub fn xthal_get_dcacheattr() -> chlorine::c_uint;
 }
 extern "C" {
-    pub fn xthal_set_cacheattr(arg1: super::raw::c_uint);
+    pub fn xthal_set_cacheattr(arg1: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_set_icacheattr(arg1: super::raw::c_uint);
+    pub fn xthal_set_icacheattr(arg1: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_set_dcacheattr(arg1: super::raw::c_uint);
+    pub fn xthal_set_dcacheattr(arg1: chlorine::c_uint);
 }
 extern "C" {
     pub fn xthal_set_region_attribute(
-        addr: *mut super::raw::c_void,
-        size: super::raw::c_uint,
-        cattr: super::raw::c_uint,
-        flags: super::raw::c_uint,
-    ) -> super::raw::c_int;
+        addr: *mut chlorine::c_void,
+        size: chlorine::c_uint,
+        cattr: chlorine::c_uint,
+        flags: chlorine::c_uint,
+    ) -> chlorine::c_int;
 }
 extern "C" {
     pub fn xthal_icache_enable();
@@ -2408,165 +2399,156 @@ extern "C" {
     pub fn xthal_dcache_all_unlock();
 }
 extern "C" {
-    pub fn xthal_icache_region_lock(addr: *mut super::raw::c_void, size: super::raw::c_uint);
+    pub fn xthal_icache_region_lock(addr: *mut chlorine::c_void, size: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_dcache_region_lock(addr: *mut super::raw::c_void, size: super::raw::c_uint);
+    pub fn xthal_dcache_region_lock(addr: *mut chlorine::c_void, size: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_icache_region_unlock(addr: *mut super::raw::c_void, size: super::raw::c_uint);
+    pub fn xthal_icache_region_unlock(addr: *mut chlorine::c_void, size: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_dcache_region_unlock(addr: *mut super::raw::c_void, size: super::raw::c_uint);
+    pub fn xthal_dcache_region_unlock(addr: *mut chlorine::c_void, size: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_icache_hugerange_invalidate(
-        addr: *mut super::raw::c_void,
-        size: super::raw::c_uint,
-    );
+    pub fn xthal_icache_hugerange_invalidate(addr: *mut chlorine::c_void, size: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_icache_hugerange_unlock(addr: *mut super::raw::c_void, size: super::raw::c_uint);
+    pub fn xthal_icache_hugerange_unlock(addr: *mut chlorine::c_void, size: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_dcache_hugerange_invalidate(
-        addr: *mut super::raw::c_void,
-        size: super::raw::c_uint,
-    );
+    pub fn xthal_dcache_hugerange_invalidate(addr: *mut chlorine::c_void, size: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_dcache_hugerange_unlock(addr: *mut super::raw::c_void, size: super::raw::c_uint);
+    pub fn xthal_dcache_hugerange_unlock(addr: *mut chlorine::c_void, size: chlorine::c_uint);
 }
 extern "C" {
-    pub fn xthal_dcache_hugerange_writeback(
-        addr: *mut super::raw::c_void,
-        size: super::raw::c_uint,
-    );
+    pub fn xthal_dcache_hugerange_writeback(addr: *mut chlorine::c_void, size: chlorine::c_uint);
 }
 extern "C" {
     pub fn xthal_dcache_hugerange_writeback_inv(
-        addr: *mut super::raw::c_void,
-        size: super::raw::c_uint,
+        addr: *mut chlorine::c_void,
+        size: chlorine::c_uint,
     );
 }
 extern "C" {
-    pub fn xthal_icache_line_lock(addr: *mut super::raw::c_void);
+    pub fn xthal_icache_line_lock(addr: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_dcache_line_lock(addr: *mut super::raw::c_void);
+    pub fn xthal_dcache_line_lock(addr: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_icache_line_unlock(addr: *mut super::raw::c_void);
+    pub fn xthal_icache_line_unlock(addr: *mut chlorine::c_void);
 }
 extern "C" {
-    pub fn xthal_dcache_line_unlock(addr: *mut super::raw::c_void);
+    pub fn xthal_dcache_line_unlock(addr: *mut chlorine::c_void);
 }
 extern "C" {
     pub fn xthal_memep_inject_error(
-        addr: *mut super::raw::c_void,
-        size: super::raw::c_int,
-        flags: super::raw::c_int,
+        addr: *mut chlorine::c_void,
+        size: chlorine::c_int,
+        flags: chlorine::c_int,
     );
 }
 extern "C" {
-    pub static Xthal_have_spanning_way: super::raw::c_uchar;
+    pub static Xthal_have_spanning_way: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_identity_map: super::raw::c_uchar;
+    pub static Xthal_have_identity_map: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_mimic_cacheattr: super::raw::c_uchar;
+    pub static Xthal_have_mimic_cacheattr: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_xlt_cacheattr: super::raw::c_uchar;
+    pub static Xthal_have_xlt_cacheattr: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_cacheattr: super::raw::c_uchar;
+    pub static Xthal_have_cacheattr: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_have_tlbs: super::raw::c_uchar;
+    pub static Xthal_have_tlbs: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_mmu_asid_bits: super::raw::c_uchar;
+    pub static Xthal_mmu_asid_bits: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_mmu_asid_kernel: super::raw::c_uchar;
+    pub static Xthal_mmu_asid_kernel: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_mmu_rings: super::raw::c_uchar;
+    pub static Xthal_mmu_rings: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_mmu_ring_bits: super::raw::c_uchar;
+    pub static Xthal_mmu_ring_bits: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_mmu_sr_bits: super::raw::c_uchar;
+    pub static Xthal_mmu_sr_bits: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_mmu_ca_bits: super::raw::c_uchar;
+    pub static Xthal_mmu_ca_bits: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_mmu_max_pte_page_size: super::raw::c_uint;
+    pub static Xthal_mmu_max_pte_page_size: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_mmu_min_pte_page_size: super::raw::c_uint;
+    pub static Xthal_mmu_min_pte_page_size: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_itlb_way_bits: super::raw::c_uchar;
+    pub static Xthal_itlb_way_bits: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_itlb_ways: super::raw::c_uchar;
+    pub static Xthal_itlb_ways: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_itlb_arf_ways: super::raw::c_uchar;
+    pub static Xthal_itlb_arf_ways: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_dtlb_way_bits: super::raw::c_uchar;
+    pub static Xthal_dtlb_way_bits: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_dtlb_ways: super::raw::c_uchar;
+    pub static Xthal_dtlb_ways: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_dtlb_arf_ways: super::raw::c_uchar;
+    pub static Xthal_dtlb_arf_ways: chlorine::c_uchar;
 }
 extern "C" {
     pub fn xthal_static_v2p(
-        vaddr: super::raw::c_uint,
-        paddrp: *mut super::raw::c_uint,
-    ) -> super::raw::c_int;
+        vaddr: chlorine::c_uint,
+        paddrp: *mut chlorine::c_uint,
+    ) -> chlorine::c_int;
 }
 extern "C" {
     pub fn xthal_static_p2v(
-        paddr: super::raw::c_uint,
-        vaddrp: *mut super::raw::c_uint,
-        cached: super::raw::c_uint,
-    ) -> super::raw::c_int;
+        paddr: chlorine::c_uint,
+        vaddrp: *mut chlorine::c_uint,
+        cached: chlorine::c_uint,
+    ) -> chlorine::c_int;
 }
 extern "C" {
     pub fn xthal_set_region_translation(
-        vaddr: *mut super::raw::c_void,
-        paddr: *mut super::raw::c_void,
-        size: super::raw::c_uint,
-        cache_atr: super::raw::c_uint,
-        flags: super::raw::c_uint,
-    ) -> super::raw::c_int;
+        vaddr: *mut chlorine::c_void,
+        paddr: *mut chlorine::c_void,
+        size: chlorine::c_uint,
+        cache_atr: chlorine::c_uint,
+        flags: chlorine::c_uint,
+    ) -> chlorine::c_int;
 }
 extern "C" {
     pub fn xthal_v2p(
-        arg1: *mut super::raw::c_void,
-        arg2: *mut *mut super::raw::c_void,
-        arg3: *mut super::raw::c_uint,
-        arg4: *mut super::raw::c_uint,
-    ) -> super::raw::c_int;
+        arg1: *mut chlorine::c_void,
+        arg2: *mut *mut chlorine::c_void,
+        arg3: *mut chlorine::c_uint,
+        arg4: *mut chlorine::c_uint,
+    ) -> chlorine::c_int;
 }
 extern "C" {
-    pub fn xthal_invalidate_region(addr: *mut super::raw::c_void) -> super::raw::c_int;
+    pub fn xthal_invalidate_region(addr: *mut chlorine::c_void) -> chlorine::c_int;
 }
 extern "C" {
     pub fn xthal_set_region_translation_raw(
-        vaddr: *mut super::raw::c_void,
-        paddr: *mut super::raw::c_void,
-        cattr: super::raw::c_uint,
-    ) -> super::raw::c_int;
+        vaddr: *mut chlorine::c_void,
+        paddr: *mut chlorine::c_void,
+        cattr: chlorine::c_uint,
+    ) -> chlorine::c_int;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -2629,7 +2611,7 @@ extern "C" {
     pub fn xthal_is_user_executable(accessRights: u32) -> i32;
 }
 extern "C" {
-    pub fn xthal_encode_memory_type(x: u32) -> super::raw::c_int;
+    pub fn xthal_encode_memory_type(x: u32) -> chlorine::c_int;
 }
 extern "C" {
     pub fn xthal_is_cacheable(memoryType: u32) -> i32;
@@ -2647,11 +2629,11 @@ extern "C" {
     pub fn xthal_write_map(entries: *const xthal_MPU_entry, n: u32);
 }
 extern "C" {
-    pub fn xthal_check_map(entries: *const xthal_MPU_entry, n: u32) -> super::raw::c_int;
+    pub fn xthal_check_map(entries: *const xthal_MPU_entry, n: u32) -> chlorine::c_int;
 }
 extern "C" {
     pub fn xthal_get_entry_for_address(
-        vaddr: *mut super::raw::c_void,
+        vaddr: *mut chlorine::c_void,
         infgmap: *mut i32,
     ) -> xthal_MPU_entry;
 }
@@ -2660,95 +2642,95 @@ extern "C" {
 }
 extern "C" {
     pub fn xthal_mpu_set_region_attribute(
-        vaddr: *mut super::raw::c_void,
+        vaddr: *mut chlorine::c_void,
         size: usize,
         accessRights: i32,
         memoryType: i32,
         flags: u32,
-    ) -> super::raw::c_int;
+    ) -> chlorine::c_int;
 }
 extern "C" {
     pub fn xthal_read_background_map(entries: *mut xthal_MPU_entry) -> i32;
 }
 extern "C" {
-    pub static Xthal_cp_id_FPU: super::raw::c_uchar;
+    pub static Xthal_cp_id_FPU: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_cp_mask_FPU: super::raw::c_uint;
+    pub static Xthal_cp_mask_FPU: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_cp_id_XCHAL_CP1_IDENT: super::raw::c_uchar;
+    pub static Xthal_cp_id_XCHAL_CP1_IDENT: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_cp_mask_XCHAL_CP1_IDENT: super::raw::c_uint;
+    pub static Xthal_cp_mask_XCHAL_CP1_IDENT: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_cp_id_XCHAL_CP2_IDENT: super::raw::c_uchar;
+    pub static Xthal_cp_id_XCHAL_CP2_IDENT: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_cp_mask_XCHAL_CP2_IDENT: super::raw::c_uint;
+    pub static Xthal_cp_mask_XCHAL_CP2_IDENT: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_cp_id_XCHAL_CP3_IDENT: super::raw::c_uchar;
+    pub static Xthal_cp_id_XCHAL_CP3_IDENT: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_cp_mask_XCHAL_CP3_IDENT: super::raw::c_uint;
+    pub static Xthal_cp_mask_XCHAL_CP3_IDENT: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_cp_id_XCHAL_CP4_IDENT: super::raw::c_uchar;
+    pub static Xthal_cp_id_XCHAL_CP4_IDENT: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_cp_mask_XCHAL_CP4_IDENT: super::raw::c_uint;
+    pub static Xthal_cp_mask_XCHAL_CP4_IDENT: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_cp_id_XCHAL_CP5_IDENT: super::raw::c_uchar;
+    pub static Xthal_cp_id_XCHAL_CP5_IDENT: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_cp_mask_XCHAL_CP5_IDENT: super::raw::c_uint;
+    pub static Xthal_cp_mask_XCHAL_CP5_IDENT: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_cp_id_XCHAL_CP6_IDENT: super::raw::c_uchar;
+    pub static Xthal_cp_id_XCHAL_CP6_IDENT: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_cp_mask_XCHAL_CP6_IDENT: super::raw::c_uint;
+    pub static Xthal_cp_mask_XCHAL_CP6_IDENT: chlorine::c_uint;
 }
 extern "C" {
-    pub static Xthal_cp_id_XCHAL_CP7_IDENT: super::raw::c_uchar;
+    pub static Xthal_cp_id_XCHAL_CP7_IDENT: chlorine::c_uchar;
 }
 extern "C" {
-    pub static Xthal_cp_mask_XCHAL_CP7_IDENT: super::raw::c_uint;
+    pub static Xthal_cp_mask_XCHAL_CP7_IDENT: chlorine::c_uint;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct XtExcFrame {
-    pub exit: super::raw::c_long,
-    pub pc: super::raw::c_long,
-    pub ps: super::raw::c_long,
-    pub a0: super::raw::c_long,
-    pub a1: super::raw::c_long,
-    pub a2: super::raw::c_long,
-    pub a3: super::raw::c_long,
-    pub a4: super::raw::c_long,
-    pub a5: super::raw::c_long,
-    pub a6: super::raw::c_long,
-    pub a7: super::raw::c_long,
-    pub a8: super::raw::c_long,
-    pub a9: super::raw::c_long,
-    pub a10: super::raw::c_long,
-    pub a11: super::raw::c_long,
-    pub a12: super::raw::c_long,
-    pub a13: super::raw::c_long,
-    pub a14: super::raw::c_long,
-    pub a15: super::raw::c_long,
-    pub sar: super::raw::c_long,
-    pub exccause: super::raw::c_long,
-    pub excvaddr: super::raw::c_long,
-    pub lbeg: super::raw::c_long,
-    pub lend: super::raw::c_long,
-    pub lcount: super::raw::c_long,
-    pub tmp0: super::raw::c_long,
-    pub tmp1: super::raw::c_long,
-    pub tmp2: super::raw::c_long,
+    pub exit: chlorine::c_long,
+    pub pc: chlorine::c_long,
+    pub ps: chlorine::c_long,
+    pub a0: chlorine::c_long,
+    pub a1: chlorine::c_long,
+    pub a2: chlorine::c_long,
+    pub a3: chlorine::c_long,
+    pub a4: chlorine::c_long,
+    pub a5: chlorine::c_long,
+    pub a6: chlorine::c_long,
+    pub a7: chlorine::c_long,
+    pub a8: chlorine::c_long,
+    pub a9: chlorine::c_long,
+    pub a10: chlorine::c_long,
+    pub a11: chlorine::c_long,
+    pub a12: chlorine::c_long,
+    pub a13: chlorine::c_long,
+    pub a14: chlorine::c_long,
+    pub a15: chlorine::c_long,
+    pub sar: chlorine::c_long,
+    pub exccause: chlorine::c_long,
+    pub excvaddr: chlorine::c_long,
+    pub lbeg: chlorine::c_long,
+    pub lend: chlorine::c_long,
+    pub lcount: chlorine::c_long,
+    pub tmp0: chlorine::c_long,
+    pub tmp1: chlorine::c_long,
+    pub tmp2: chlorine::c_long,
 }
 #[test]
 fn bindgen_test_layout_XtExcFrame() {
@@ -3046,14 +3028,14 @@ fn bindgen_test_layout_XtExcFrame() {
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct XtSolFrame {
-    pub exit: super::raw::c_long,
-    pub pc: super::raw::c_long,
-    pub ps: super::raw::c_long,
-    pub next: super::raw::c_long,
-    pub a0: super::raw::c_long,
-    pub a1: super::raw::c_long,
-    pub a2: super::raw::c_long,
-    pub a3: super::raw::c_long,
+    pub exit: chlorine::c_long,
+    pub pc: chlorine::c_long,
+    pub ps: chlorine::c_long,
+    pub next: chlorine::c_long,
+    pub a0: chlorine::c_long,
+    pub a1: chlorine::c_long,
+    pub a2: chlorine::c_long,
+    pub a3: chlorine::c_long,
 }
 #[test]
 fn bindgen_test_layout_XtSolFrame() {
@@ -3150,21 +3132,20 @@ fn bindgen_test_layout_XtSolFrame() {
 }
 extern "C" {
     pub fn vPortPanic(
-        file: *const super::raw::c_char,
+        file: *const chlorine::c_char,
         file_len: usize,
         line: usize,
-        func: *const super::raw::c_char,
+        func: *const chlorine::c_char,
         func_len: usize,
     );
 }
 extern "C" {
-    pub fn strlen(str_: *const super::raw::c_char) -> super::raw::c_uint;
+    pub fn strlen(str_: *const chlorine::c_char) -> chlorine::c_uint;
 }
-pub type TaskFunction_t =
-    ::core::option::Option<unsafe extern "C" fn(arg1: *mut super::raw::c_void)>;
+pub type TaskFunction_t = ::core::option::Option<unsafe extern "C" fn(arg1: *mut chlorine::c_void)>;
 pub type StackType_t = u32;
-pub type BaseType_t = super::raw::c_int;
-pub type UBaseType_t = super::raw::c_uint;
+pub type BaseType_t = chlorine::c_int;
+pub type UBaseType_t = chlorine::c_uint;
 pub type TickType_t = u32;
 extern "C" {
     pub fn vTaskEnterCritical();
@@ -3210,7 +3191,7 @@ extern "C" {
     pub fn pxPortInitialiseStack(
         pxTopOfStack: *mut StackType_t,
         pxCode: TaskFunction_t,
-        pvParameters: *mut super::raw::c_void,
+        pvParameters: *mut chlorine::c_void,
         xRunPrivileged: BaseType_t,
     ) -> *mut StackType_t;
 }
@@ -3372,10 +3353,10 @@ extern "C" {
     pub fn vPortGetHeapStats(pxHeapStats: *mut HeapStats_t);
 }
 extern "C" {
-    pub fn pvPortMalloc(xSize: usize) -> *mut super::raw::c_void;
+    pub fn pvPortMalloc(xSize: usize) -> *mut chlorine::c_void;
 }
 extern "C" {
-    pub fn vPortFree(pv: *mut super::raw::c_void);
+    pub fn vPortFree(pv: *mut chlorine::c_void);
 }
 extern "C" {
     pub fn vPortInitialiseBlocks();
@@ -3404,7 +3385,7 @@ extern "C" {
 #[derive(Debug, Copy, Clone)]
 pub struct xSTATIC_LIST_ITEM {
     pub xDummy2: TickType_t,
-    pub pvDummy3: [*mut super::raw::c_void; 4usize],
+    pub pvDummy3: [*mut chlorine::c_void; 4usize],
 }
 #[test]
 fn bindgen_test_layout_xSTATIC_LIST_ITEM() {
@@ -3444,7 +3425,7 @@ pub type StaticListItem_t = xSTATIC_LIST_ITEM;
 #[derive(Debug, Copy, Clone)]
 pub struct xSTATIC_MINI_LIST_ITEM {
     pub xDummy2: TickType_t,
-    pub pvDummy3: [*mut super::raw::c_void; 2usize],
+    pub pvDummy3: [*mut chlorine::c_void; 2usize],
 }
 #[test]
 fn bindgen_test_layout_xSTATIC_MINI_LIST_ITEM() {
@@ -3486,7 +3467,7 @@ pub type StaticMiniListItem_t = xSTATIC_MINI_LIST_ITEM;
 #[derive(Debug, Copy, Clone)]
 pub struct xSTATIC_LIST {
     pub uxDummy2: UBaseType_t,
-    pub pvDummy3: *mut super::raw::c_void,
+    pub pvDummy3: *mut chlorine::c_void,
     pub xDummy4: StaticMiniListItem_t,
 }
 #[test]
@@ -3536,15 +3517,15 @@ pub type StaticList_t = xSTATIC_LIST;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct xSTATIC_TCB {
-    pub pxDummy1: *mut super::raw::c_void,
+    pub pxDummy1: *mut chlorine::c_void,
     pub xDummy2: xMPU_SETTINGS,
     pub xDummy3: [StaticListItem_t; 2usize],
     pub uxDummy5: UBaseType_t,
-    pub pxDummy6: *mut super::raw::c_void,
+    pub pxDummy6: *mut chlorine::c_void,
     pub ucDummy7: [u8; 16usize],
     pub uxDummy9: UBaseType_t,
     pub uxDummy12: [UBaseType_t; 2usize],
-    pub pvDummy15: [*mut super::raw::c_void; 1usize],
+    pub pvDummy15: [*mut chlorine::c_void; 1usize],
     pub ulDummy18: [u32; 1usize],
     pub ucDummy19: [u8; 1usize],
     pub uxDummy20: u8,
@@ -3686,17 +3667,17 @@ pub type StaticTask_t = xSTATIC_TCB;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct xSTATIC_QUEUE {
-    pub pvDummy1: [*mut super::raw::c_void; 3usize],
+    pub pvDummy1: [*mut chlorine::c_void; 3usize],
     pub u: xSTATIC_QUEUE__bindgen_ty_1,
     pub xDummy3: [StaticList_t; 2usize],
     pub uxDummy4: [UBaseType_t; 3usize],
     pub ucDummy5: [u8; 2usize],
-    pub pvDummy7: *mut super::raw::c_void,
+    pub pvDummy7: *mut chlorine::c_void,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union xSTATIC_QUEUE__bindgen_ty_1 {
-    pub pvDummy2: *mut super::raw::c_void,
+    pub pvDummy2: *mut chlorine::c_void,
     pub uxDummy2: UBaseType_t,
 }
 #[test]
@@ -3854,10 +3835,10 @@ pub type StaticEventGroup_t = xSTATIC_EVENT_GROUP;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct xSTATIC_TIMER {
-    pub pvDummy1: *mut super::raw::c_void,
+    pub pvDummy1: *mut chlorine::c_void,
     pub xDummy2: StaticListItem_t,
     pub xDummy3: TickType_t,
-    pub pvDummy5: *mut super::raw::c_void,
+    pub pvDummy5: *mut chlorine::c_void,
     pub pvDummy6: TaskFunction_t,
     pub ucDummy8: u8,
 }
@@ -3939,7 +3920,7 @@ pub type StaticTimer_t = xSTATIC_TIMER;
 #[derive(Debug, Copy, Clone)]
 pub struct xSTATIC_STREAM_BUFFER {
     pub uxDummy1: [usize; 4usize],
-    pub pvDummy2: [*mut super::raw::c_void; 3usize],
+    pub pvDummy2: [*mut chlorine::c_void; 3usize],
     pub ucDummy3: u8,
 }
 #[test]
@@ -3993,7 +3974,7 @@ pub struct xLIST_ITEM {
     pub xItemValue: TickType_t,
     pub pxNext: *mut xLIST_ITEM,
     pub pxPrevious: *mut xLIST_ITEM,
-    pub pvOwner: *mut super::raw::c_void,
+    pub pvOwner: *mut chlorine::c_void,
     pub pvContainer: *mut xLIST,
 }
 #[test]
@@ -4192,20 +4173,20 @@ pub struct tskTaskControlBlock {
 }
 pub type TaskHandle_t = *mut tskTaskControlBlock;
 pub type TaskHookFunction_t =
-    ::core::option::Option<unsafe extern "C" fn(arg1: *mut super::raw::c_void) -> BaseType_t>;
+    ::core::option::Option<unsafe extern "C" fn(arg1: *mut chlorine::c_void) -> BaseType_t>;
 pub const eTaskState_eRunning: eTaskState = 0;
 pub const eTaskState_eReady: eTaskState = 1;
 pub const eTaskState_eBlocked: eTaskState = 2;
 pub const eTaskState_eSuspended: eTaskState = 3;
 pub const eTaskState_eDeleted: eTaskState = 4;
 pub const eTaskState_eInvalid: eTaskState = 5;
-pub type eTaskState = super::raw::c_uint;
+pub type eTaskState = chlorine::c_uint;
 pub const eNotifyAction_eNoAction: eNotifyAction = 0;
 pub const eNotifyAction_eSetBits: eNotifyAction = 1;
 pub const eNotifyAction_eIncrement: eNotifyAction = 2;
 pub const eNotifyAction_eSetValueWithOverwrite: eNotifyAction = 3;
 pub const eNotifyAction_eSetValueWithoutOverwrite: eNotifyAction = 4;
-pub type eNotifyAction = super::raw::c_uint;
+pub type eNotifyAction = chlorine::c_uint;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct xTIME_OUT {
@@ -4249,7 +4230,7 @@ pub type TimeOut_t = xTIME_OUT;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct xMEMORY_REGION {
-    pub pvBaseAddress: *mut super::raw::c_void,
+    pub pvBaseAddress: *mut chlorine::c_void,
     pub ulLengthInBytes: u32,
     pub ulParameters: u32,
 }
@@ -4301,9 +4282,9 @@ pub type MemoryRegion_t = xMEMORY_REGION;
 #[derive(Debug, Copy, Clone)]
 pub struct xTASK_PARAMETERS {
     pub pvTaskCode: TaskFunction_t,
-    pub pcName: *const super::raw::c_char,
+    pub pcName: *const chlorine::c_char,
     pub usStackDepth: u16,
-    pub pvParameters: *mut super::raw::c_void,
+    pub pvParameters: *mut chlorine::c_void,
     pub uxPriority: UBaseType_t,
     pub puxStackBuffer: *mut StackType_t,
     pub xRegions: [MemoryRegion_t; 1usize],
@@ -4398,7 +4379,7 @@ pub type TaskParameters_t = xTASK_PARAMETERS;
 #[derive(Debug, Copy, Clone)]
 pub struct xTASK_STATUS {
     pub xHandle: TaskHandle_t,
-    pub pcTaskName: *const super::raw::c_char,
+    pub pcTaskName: *const chlorine::c_char,
     pub xTaskNumber: UBaseType_t,
     pub eCurrentState: eTaskState,
     pub uxCurrentPriority: UBaseType_t,
@@ -4516,13 +4497,13 @@ pub type TaskStatus_t = xTASK_STATUS;
 pub const eSleepModeStatus_eAbortSleep: eSleepModeStatus = 0;
 pub const eSleepModeStatus_eStandardSleep: eSleepModeStatus = 1;
 pub const eSleepModeStatus_eNoTasksWaitingTimeout: eSleepModeStatus = 2;
-pub type eSleepModeStatus = super::raw::c_uint;
+pub type eSleepModeStatus = chlorine::c_uint;
 extern "C" {
     pub fn xTaskCreate(
         pxTaskCode: TaskFunction_t,
-        pcName: *const super::raw::c_char,
+        pcName: *const chlorine::c_char,
         usStackDepth: u16,
-        pvParameters: *mut super::raw::c_void,
+        pvParameters: *mut chlorine::c_void,
         uxPriority: UBaseType_t,
         pxCreatedTask: *mut TaskHandle_t,
     ) -> BaseType_t;
@@ -5327,7 +5308,7 @@ extern "C" {
     #[doc = ""]
     #[doc = " \\defgroup pcTaskGetName pcTaskGetName"]
     #[doc = " \\ingroup TaskUtils"]
-    pub fn pcTaskGetName(xTaskToQuery: TaskHandle_t) -> *mut super::raw::c_char;
+    pub fn pcTaskGetName(xTaskToQuery: TaskHandle_t) -> *mut chlorine::c_char;
 }
 extern "C" {
     #[doc = " task. h"]
@@ -5342,7 +5323,7 @@ extern "C" {
     #[doc = ""]
     #[doc = " \\defgroup pcTaskGetHandle pcTaskGetHandle"]
     #[doc = " \\ingroup TaskUtils"]
-    pub fn xTaskGetHandle(pcNameToQuery: *const super::raw::c_char) -> TaskHandle_t;
+    pub fn xTaskGetHandle(pcNameToQuery: *const chlorine::c_char) -> TaskHandle_t;
 }
 extern "C" {
     #[doc = " task.h"]
@@ -5400,14 +5381,14 @@ extern "C" {
     pub fn vTaskSetThreadLocalStoragePointer(
         xTaskToSet: TaskHandle_t,
         xIndex: BaseType_t,
-        pvValue: *mut super::raw::c_void,
+        pvValue: *mut chlorine::c_void,
     );
 }
 extern "C" {
     pub fn pvTaskGetThreadLocalStoragePointer(
         xTaskToQuery: TaskHandle_t,
         xIndex: BaseType_t,
-    ) -> *mut super::raw::c_void;
+    ) -> *mut chlorine::c_void;
 }
 extern "C" {
     #[doc = " task.h"]
@@ -5419,7 +5400,7 @@ extern "C" {
     #[doc = ""]
     #[doc = " @param xTask the task that just exceeded its stack boundaries."]
     #[doc = " @param pcTaskName A character string containing the name of the offending task."]
-    pub fn vApplicationStackOverflowHook(xTask: TaskHandle_t, pcTaskName: *mut super::raw::c_char);
+    pub fn vApplicationStackOverflowHook(xTask: TaskHandle_t, pcTaskName: *mut chlorine::c_char);
 }
 extern "C" {
     #[doc = " task.h"]
@@ -5435,7 +5416,7 @@ extern "C" {
     #[doc = " registered by the user."]
     pub fn xTaskCallApplicationTaskHook(
         xTask: TaskHandle_t,
-        pvParameter: *mut super::raw::c_void,
+        pvParameter: *mut chlorine::c_void,
     ) -> BaseType_t;
 }
 extern "C" {
@@ -5594,7 +5575,7 @@ extern "C" {
     #[doc = ""]
     #[doc = " \\defgroup vTaskList vTaskList"]
     #[doc = " \\ingroup TaskUtils"]
-    pub fn vTaskList(pcWriteBuffer: *mut super::raw::c_char);
+    pub fn vTaskList(pcWriteBuffer: *mut chlorine::c_char);
 }
 extern "C" {
     #[doc = " task. h"]
@@ -5647,7 +5628,7 @@ extern "C" {
     #[doc = ""]
     #[doc = " \\defgroup vTaskGetRunTimeStats vTaskGetRunTimeStats"]
     #[doc = " \\ingroup TaskUtils"]
-    pub fn vTaskGetRunTimeStats(pcWriteBuffer: *mut super::raw::c_char);
+    pub fn vTaskGetRunTimeStats(pcWriteBuffer: *mut chlorine::c_char);
 }
 extern "C" {
     #[doc = " task. h"]
@@ -6546,13 +6527,13 @@ pub type TimerHandle_t = *mut tmrTimerControl;
 pub type TimerCallbackFunction_t =
     ::core::option::Option<unsafe extern "C" fn(xTimer: TimerHandle_t)>;
 pub type PendedFunction_t =
-    ::core::option::Option<unsafe extern "C" fn(arg1: *mut super::raw::c_void, arg2: u32)>;
+    ::core::option::Option<unsafe extern "C" fn(arg1: *mut chlorine::c_void, arg2: u32)>;
 extern "C" {
     pub fn xTimerCreate(
-        pcTimerName: *const super::raw::c_char,
+        pcTimerName: *const chlorine::c_char,
         xTimerPeriodInTicks: TickType_t,
         uxAutoReload: UBaseType_t,
-        pvTimerID: *mut super::raw::c_void,
+        pvTimerID: *mut chlorine::c_void,
         pxCallbackFunction: TimerCallbackFunction_t,
     ) -> TimerHandle_t;
 }
@@ -6575,7 +6556,7 @@ extern "C" {
     #[doc = " Example usage:"]
     #[doc = ""]
     #[doc = " See the xTimerCreate() API function example usage scenario."]
-    pub fn pvTimerGetTimerID(xTimer: TimerHandle_t) -> *mut super::raw::c_void;
+    pub fn pvTimerGetTimerID(xTimer: TimerHandle_t) -> *mut chlorine::c_void;
 }
 extern "C" {
     #[doc = " void vTimerSetTimerID( TimerHandle_t xTimer, void *pvNewID );"]
@@ -6595,7 +6576,7 @@ extern "C" {
     #[doc = " Example usage:"]
     #[doc = ""]
     #[doc = " See the xTimerCreate() API function example usage scenario."]
-    pub fn vTimerSetTimerID(xTimer: TimerHandle_t, pvNewID: *mut super::raw::c_void);
+    pub fn vTimerSetTimerID(xTimer: TimerHandle_t, pvNewID: *mut chlorine::c_void);
 }
 extern "C" {
     #[doc = " BaseType_t xTimerIsTimerActive( TimerHandle_t xTimer );"]
@@ -6729,7 +6710,7 @@ extern "C" {
     #[doc = " @endverbatim"]
     pub fn xTimerPendFunctionCallFromISR(
         xFunctionToPend: PendedFunction_t,
-        pvParameter1: *mut super::raw::c_void,
+        pvParameter1: *mut chlorine::c_void,
         ulParameter2: u32,
         pxHigherPriorityTaskWoken: *mut BaseType_t,
     ) -> BaseType_t;
@@ -6767,7 +6748,7 @@ extern "C" {
     #[doc = ""]
     pub fn xTimerPendFunctionCall(
         xFunctionToPend: PendedFunction_t,
-        pvParameter1: *mut super::raw::c_void,
+        pvParameter1: *mut chlorine::c_void,
         ulParameter2: u32,
         xTicksToWait: TickType_t,
     ) -> BaseType_t;
@@ -6780,7 +6761,7 @@ extern "C" {
     #[doc = " @param xTimer The handle of the timer being queried."]
     #[doc = ""]
     #[doc = " @return The name assigned to the timer specified by the xTimer parameter."]
-    pub fn pcTimerGetName(xTimer: TimerHandle_t) -> *const super::raw::c_char;
+    pub fn pcTimerGetName(xTimer: TimerHandle_t) -> *const chlorine::c_char;
 }
 extern "C" {
     #[doc = " void vTimerSetReloadMode( TimerHandle_t xTimer, const UBaseType_t uxAutoReload );"]
@@ -6950,7 +6931,7 @@ extern "C" {
     #[doc = " \\ingroup QueueManagement"]
     pub fn xQueueGenericSend(
         xQueue: QueueHandle_t,
-        pvItemToQueue: *const super::raw::c_void,
+        pvItemToQueue: *const chlorine::c_void,
         xTicksToWait: TickType_t,
         xCopyPosition: BaseType_t,
     ) -> BaseType_t;
@@ -7049,7 +7030,7 @@ extern "C" {
     #[doc = " \\ingroup QueueManagement"]
     pub fn xQueuePeek(
         xQueue: QueueHandle_t,
-        pvBuffer: *mut super::raw::c_void,
+        pvBuffer: *mut chlorine::c_void,
         xTicksToWait: TickType_t,
     ) -> BaseType_t;
 }
@@ -7084,10 +7065,7 @@ extern "C" {
     #[doc = ""]
     #[doc = " \\defgroup xQueuePeekFromISR xQueuePeekFromISR"]
     #[doc = " \\ingroup QueueManagement"]
-    pub fn xQueuePeekFromISR(
-        xQueue: QueueHandle_t,
-        pvBuffer: *mut super::raw::c_void,
-    ) -> BaseType_t;
+    pub fn xQueuePeekFromISR(xQueue: QueueHandle_t, pvBuffer: *mut chlorine::c_void) -> BaseType_t;
 }
 extern "C" {
     #[doc = " queue. h"]
@@ -7180,7 +7158,7 @@ extern "C" {
     #[doc = " \\ingroup QueueManagement"]
     pub fn xQueueReceive(
         xQueue: QueueHandle_t,
-        pvBuffer: *mut super::raw::c_void,
+        pvBuffer: *mut chlorine::c_void,
         xTicksToWait: TickType_t,
     ) -> BaseType_t;
 }
@@ -7311,7 +7289,7 @@ extern "C" {
     #[doc = " \\ingroup QueueManagement"]
     pub fn xQueueGenericSendFromISR(
         xQueue: QueueHandle_t,
-        pvItemToQueue: *const super::raw::c_void,
+        pvItemToQueue: *const chlorine::c_void,
         pxHigherPriorityTaskWoken: *mut BaseType_t,
         xCopyPosition: BaseType_t,
     ) -> BaseType_t;
@@ -7410,7 +7388,7 @@ extern "C" {
     #[doc = " \\ingroup QueueManagement"]
     pub fn xQueueReceiveFromISR(
         xQueue: QueueHandle_t,
-        pvBuffer: *mut super::raw::c_void,
+        pvBuffer: *mut chlorine::c_void,
         pxHigherPriorityTaskWoken: *mut BaseType_t,
     ) -> BaseType_t;
 }
@@ -7426,28 +7404,28 @@ extern "C" {
 extern "C" {
     pub fn xQueueCRSendFromISR(
         xQueue: QueueHandle_t,
-        pvItemToQueue: *const super::raw::c_void,
+        pvItemToQueue: *const chlorine::c_void,
         xCoRoutinePreviouslyWoken: BaseType_t,
     ) -> BaseType_t;
 }
 extern "C" {
     pub fn xQueueCRReceiveFromISR(
         xQueue: QueueHandle_t,
-        pvBuffer: *mut super::raw::c_void,
+        pvBuffer: *mut chlorine::c_void,
         pxTaskWoken: *mut BaseType_t,
     ) -> BaseType_t;
 }
 extern "C" {
     pub fn xQueueCRSend(
         xQueue: QueueHandle_t,
-        pvItemToQueue: *const super::raw::c_void,
+        pvItemToQueue: *const chlorine::c_void,
         xTicksToWait: TickType_t,
     ) -> BaseType_t;
 }
 extern "C" {
     pub fn xQueueCRReceive(
         xQueue: QueueHandle_t,
-        pvBuffer: *mut super::raw::c_void,
+        pvBuffer: *mut chlorine::c_void,
         xTicksToWait: TickType_t,
     ) -> BaseType_t;
 }
@@ -7951,10 +7929,10 @@ extern "C" {
     pub fn vEventGroupDelete(xEventGroup: EventGroupHandle_t);
 }
 extern "C" {
-    pub fn vEventGroupSetBitsCallback(pvEventGroup: *mut super::raw::c_void, ulBitsToSet: u32);
+    pub fn vEventGroupSetBitsCallback(pvEventGroup: *mut chlorine::c_void, ulBitsToSet: u32);
 }
 extern "C" {
-    pub fn vEventGroupClearBitsCallback(pvEventGroup: *mut super::raw::c_void, ulBitsToClear: u32);
+    pub fn vEventGroupClearBitsCallback(pvEventGroup: *mut chlorine::c_void, ulBitsToClear: u32);
 }
 extern "C" {
     #[doc = " Get the first frame of the current stack's backtrace"]
