@@ -50,8 +50,7 @@ extern "C" {
 #undef STRUCT_AFIELD
 #endif
 #include <xtensa/xtruntime.h>
-
-//#include "xtensa_context.h"
+#include "xtensa_context.h"
 
 /*-----------------------------------------------------------
  * Port specific definitions.

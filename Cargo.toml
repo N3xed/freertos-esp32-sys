@@ -4,6 +4,11 @@ version = "0.1.0"
 edition = "2018"
 authors = ["Dominik Gschwind <dominik.gschwind99@gmail.com>"]
 license = "MIT or Apache-2.0"
+description = "ESP32 freertos port and bindings"
+readme = "README.md"
+repository = ""
+keywords = ["embedded", "freertos", "bindings", "bindgen", "port"]
+categories = ["embedded", "no-std", "api-bindings"]
 
 [dependencies]
 chlorine = "1.0"
