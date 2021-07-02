@@ -42,8 +42,6 @@ extern void _frxt_tick_timer_init(void);
 /* Defined in xtensa_context.S */
 extern void _xt_coproc_init(void);
 
-/*-----------------------------------------------------------*/
-
 /* We require the address of the pxCurrentTCB variable, but don't want to know
 any details of its type. */
 typedef void TCB_t;
@@ -53,22 +51,6 @@ unsigned port_xSchedulerRunning =
     0; // Duplicate of inaccessible xSchedulerRunning; needed at startup to
        // avoid counting nesting
 unsigned port_interruptNesting = 0; // Interrupt nesting level
-
-/*-----------------------------------------------------------*/
-
-/**
- * @brief Set the `PS.INTLEVEL` special register to `intlevel` and return the
- * state of the whole `PS` register before the write.
- *
- * @param intlevel The new interrupt level.
- * @return The value of the `PS` special register before the new intlevel was
- * set.
- */
-unsigned _xtos_set_intlevel(int intlevel) {
-  unsigned state = intlevel & 0xf;
-  __asm__ volatile("XSR.PS %0" : "+a"(state) : : "memory");
-  return state;
-}
 
 // User exception dispatcher when exiting
 void _xt_user_exit(void);
@@ -91,7 +73,7 @@ StackType_t *pxPortInitialiseStack(StackType_t *pxTopOfStack,
 #if XCHAL_CP_NUM > 0
   uint32_t *p;
 #endif
-  
+
 #if portUSING_MPU_WRAPPERS
   (void)(xRunPrivileged);
 #endif

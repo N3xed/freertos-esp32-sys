@@ -78,15 +78,20 @@ typedef unsigned portBASE_TYPE	UBaseType_t;
 
 #if( configUSE_16_BIT_TICKS == 1 )
 	typedef uint16_t TickType_t;
-	#define portMAX_DELAY ( TickType_t ) 0xffff
+	#define portMAX_DELAY  0xffff
 #else
 	typedef uint32_t TickType_t;
-	#define portMAX_DELAY ( TickType_t ) 0xffffffffUL
+	#define portMAX_DELAY  0xffffffffUL
 #endif
 /*-----------------------------------------------------------*/
 
 // portbenchmark
 #include "portbenchmark.h"
+
+extern void vPortPanic(const char* file, size_t file_len, size_t line, const char* func, size_t func_len);
+extern size_t strlen(const char* str);
+extern UBaseType_t ulTaskEnterCriticalFromISR();
+extern void vTaskExitCriticalFromISR(UBaseType_t uxSavedInterruptStatus);
 
 /* Critical section management. NW-TODO: replace XTOS_SET_INTLEVEL with more efficient version, if any? */
 // These cannot be nested. They should be used with a lot of care and cannot be called from interrupt level.
@@ -103,7 +108,7 @@ void vTaskExitCritical(void);
 // Cleaner and preferred solution allows nested interrupts disabling and restoring via local registers or stack.
 // They can be called from interrupts too.
 static inline unsigned portENTER_CRITICAL_NESTED() { unsigned state = XTOS_SET_INTLEVEL(XCHAL_EXCM_LEVEL); portbenchmarkINTERRUPT_DISABLE(); return state; }
-#define portEXIT_CRITICAL_NESTED(state)   do { portbenchmarkINTERRUPT_RESTORE(state); XTOS_RESTORE_JUST_INTLEVEL(state); } while (0)
+#define portEXIT_CRITICAL_NESTED(state)   do { portbenchmarkINTERRUPT_RESTORE(state); __asm__ volatile("WSR.PS %0" : : "r"(state): "memory"); } while (0)
 
 // These FreeRTOS versions are similar to the nested versions above
 #define portSET_INTERRUPT_MASK_FROM_ISR()            portENTER_CRITICAL_NESTED()

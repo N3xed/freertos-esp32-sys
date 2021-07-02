@@ -1660,6 +1660,7 @@ pub const pdFREERTOS_LITTLE_ENDIAN: u32 = 0;
 pub const pdFREERTOS_BIG_ENDIAN: u32 = 1;
 pub const pdLITTLE_ENDIAN: u32 = 0;
 pub const pdBIG_ENDIAN: u32 = 1;
+pub const portMAX_DELAY: u32 = 4294967295;
 pub const portCRITICAL_NESTING_IN_TCB: u32 = 1;
 pub const portSTACK_GROWTH: i32 = -1;
 pub const portBYTE_ALIGNMENT: u32 = 4;
@@ -3130,6 +3131,11 @@ fn bindgen_test_layout_XtSolFrame() {
         )
     );
 }
+pub type TaskFunction_t = ::core::option::Option<unsafe extern "C" fn(arg1: *mut chlorine::c_void)>;
+pub type StackType_t = u32;
+pub type BaseType_t = chlorine::c_int;
+pub type UBaseType_t = chlorine::c_uint;
+pub type TickType_t = u32;
 extern "C" {
     pub fn vPortPanic(
         file: *const chlorine::c_char,
@@ -3142,11 +3148,12 @@ extern "C" {
 extern "C" {
     pub fn strlen(str_: *const chlorine::c_char) -> chlorine::c_uint;
 }
-pub type TaskFunction_t = ::core::option::Option<unsafe extern "C" fn(arg1: *mut chlorine::c_void)>;
-pub type StackType_t = u32;
-pub type BaseType_t = chlorine::c_int;
-pub type UBaseType_t = chlorine::c_uint;
-pub type TickType_t = u32;
+extern "C" {
+    pub fn ulTaskEnterCriticalFromISR() -> UBaseType_t;
+}
+extern "C" {
+    pub fn vTaskExitCriticalFromISR(uxSavedInterruptStatus: UBaseType_t);
+}
 extern "C" {
     pub fn vTaskEnterCritical();
 }

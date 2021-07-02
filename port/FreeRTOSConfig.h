@@ -111,9 +111,6 @@
 #include "esp32s2/rom/ets_sys.h"
 #endif
 
-extern void vPortPanic(const char* file, size_t file_len, size_t line, const char* func, size_t func_len);
-extern size_t strlen(const char* str);
-
 #if defined(CONFIG_FREERTOS_ASSERT_DISABLE)
 #define configASSERT(a) /* assertions disabled */
 #elif defined(CONFIG_FREERTOS_ASSERT_FAIL_PRINT_CONTINUE)
