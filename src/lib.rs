@@ -11,6 +11,7 @@ mod bindings;
 pub mod glue;
 
 pub use bindings::*;
+pub use glue::vPortYieldFromISR;
 
 // TODO: Bindgen should also generate these
 pub const pdTRUE: BaseType_t = 1;
@@ -24,3 +25,11 @@ pub const queueQUEUE_TYPE_MUTEX: u8 = 1;
 pub const queueQUEUE_TYPE_COUNTING_SEMAPHORE: u8 = 2;
 pub const queueQUEUE_TYPE_BINARY_SEMAPHORE: u8 = 3;
 pub const queueQUEUE_TYPE_RECURSIVE_MUTEX: u8 = 4;
+
+pub fn wait_until_scheduler_running() {
+    unsafe {
+        while xPortSchedulerRunning() == pdFALSE {
+            core::hint::spin_loop();
+        }
+    }
+}

@@ -47,7 +47,7 @@ any details of its type. */
 typedef void TCB_t;
 extern volatile TCB_t *volatile pxCurrentTCB;
 
-unsigned port_xSchedulerRunning =
+volatile unsigned port_xSchedulerRunning =
     0; // Duplicate of inaccessible xSchedulerRunning; needed at startup to
        // avoid counting nesting
 unsigned port_interruptNesting = 0; // Interrupt nesting level
@@ -143,6 +143,7 @@ void vPortEndScheduler(void) {
 BaseType_t xPortStartScheduler(void) {
   // Interrupts are disabled at this point and stack contains PS with enabled
   // interrupts when task context is restored
+  // 
 
 #if XCHAL_CP_NUM > 0
   /* Initialize co-processor management for tasks. Leave CPENABLE alone. */
@@ -167,6 +168,10 @@ BaseType_t xPortStartScheduler(void) {
 
   /* Should not get here. */
   return pdTRUE;
+}
+
+BaseType_t xPortSchedulerRunning() {
+    return port_xSchedulerRunning;
 }
 /*-----------------------------------------------------------*/
 

@@ -189,11 +189,9 @@
     extract_msb  a4, a2                     /* a4 = MSB of a2, a2 trashed */
 
     movi    a3, XT_TIMER_INTEN              /* a3 = timer interrupt bit */
-    wsr     a4, INTCLEAR                    /* clear sw or edge-triggered interrupt */
     beq     a3, a4, 7f                      /* if timer interrupt then skip table */
 
-    find_ms_setbit a3, a4, a3, 0            /* a3 = interrupt number */
-    mov a6, a3
+    movi a6, \level
     mov a7, sp
     call4 __level_\level\()_interrupt
 
@@ -203,20 +201,15 @@
 
     .ifeq XT_TIMER_INTPRI - \level
 .L_xt_user_int_timer_&level&:
+    wsr     a4, INTCLEAR                    /* clear sw or edge-triggered interrupt */
     /*
     Interrupt handler for the RTOS tick timer if at this level.
     We'll be reading the interrupt state again after this call
     so no need to preserve any registers except a6 (vpri_mask).
     */
 
-    #ifdef __XTENSA_CALL0_ABI__
-    mov     a12, a6
-    call0   XT_RTOS_TIMER_INT
-    mov     a2, a12
-    #else
     mov     a2, a6
     call4   XT_RTOS_TIMER_INT
-    #endif
     .endif
 
     j       .L_xt_user_int_&level&          /* check for more interrupts */
@@ -348,7 +341,7 @@ _NMIExceptionVector:
 --------------------------------------------------------------------------------
 */
 
-    .text
+    .section .rwtext
 
     .align      4
 _xt_to_alloca_exc:
@@ -546,9 +539,9 @@ __double_exception_trampoline:
     #ifdef XT_DEBUG_BACKTRACE
     l32i    a0, sp, XT_STK_A1
     s32e    a0, sp, -12                     /* for debug backtrace */
-    rsr     a0, EXCSAVE_5
+    rsr     a0, DEPC
     s32e    a0, sp, -16                     /* for debug backtrace */
-    rsr     a0, DEPC                   /* return address for debug backtrace */
+    rsr     a0, EXCSAVE_5                   /* return address for debug backtrace */
     movi    a5, 0xC0000000                  /* constant with top 2 bits set (call size) */
     rsync                                   /* wait for WSR.PS to complete */
     or      a0, a0, a5                      /* set top 2 bits */
@@ -702,7 +695,7 @@ _xt_coproc_mask:
 _xt_coproc_owner_sa:
     .space  XCHAL_CP_MAX << 2
 
-    .text
+    .section .rwtext
 
 
     .align  4
@@ -888,7 +881,7 @@ _xt_coproc_exc:
 -------------------------------------------------------------------------------
 */
 
-    .text
+    .section .rwtext
     .type       _xt_lowint1,@function
     .align      4
 
@@ -951,7 +944,7 @@ _xt_lowint1:
 -------------------------------------------------------------------------------
 */
 
-    .text
+    .section .rwtext
     .type       _xt_medint2,@function
     .align      4
 _xt_medint2:
@@ -973,11 +966,7 @@ _xt_medint2:
     /* !! We are now on the RTOS system stack !! */
 
     /* Set up PS for C, enable interrupts above this level and clear EXCM. */
-    #ifdef __XTENSA_CALL0_ABI__
-    movi    a0, PS_INTLEVEL(2) | PS_UM
-    #else
     movi    a0, PS_INTLEVEL(2) | PS_UM | PS_WOE
-    #endif
     wsr     a0, PS
     rsync
 
@@ -1006,7 +995,7 @@ _xt_medint2_exit:
     rsync                                   /* ensure EPS and EPC written */
     rfi     2
 
-    .text
+    .section .rwtext
     .type       _xt_medint3,@function
     .align      4
 _xt_medint3:
@@ -1028,11 +1017,7 @@ _xt_medint3:
     /* !! We are now on the RTOS system stack !! */
 
     /* Set up PS for C, enable interrupts above this level and clear EXCM. */
-    #ifdef __XTENSA_CALL0_ABI__
-    movi    a0, PS_INTLEVEL(3) | PS_UM
-    #else
     movi    a0, PS_INTLEVEL(3) | PS_UM | PS_WOE
-    #endif
     wsr     a0, PS
     rsync
 
@@ -1061,7 +1046,7 @@ _xt_medint3_exit:
     rsync                                   /* ensure EPS and EPC written */
     rfi     3
 
-    .text
+    .section .rwtext
     .type       _xt_medint4,@function
     .align      4
 _xt_medint4:
@@ -1083,11 +1068,7 @@ _xt_medint4:
     /* !! We are now on the RTOS system stack !! */
 
     /* Set up PS for C, enable interrupts above this level and clear EXCM. */
-    #ifdef __XTENSA_CALL0_ABI__
-    movi    a0, PS_INTLEVEL(4) | PS_UM
-    #else
     movi    a0, PS_INTLEVEL(4) | PS_UM | PS_WOE
-    #endif
     wsr     a0, PS
     rsync
 
@@ -1116,7 +1097,7 @@ _xt_medint4_exit:
     rsync                                   /* ensure EPS and EPC written */
     rfi     4
 
-    .text
+    .section .rwtext
     .type       _xt_medint5,@function
     .align      4
 _xt_medint5:
@@ -1138,11 +1119,7 @@ _xt_medint5:
     /* !! We are now on the RTOS system stack !! */
 
     /* Set up PS for C, enable interrupts above this level and clear EXCM. */
-    #ifdef __XTENSA_CALL0_ABI__
-    movi    a0, PS_INTLEVEL(5) | PS_UM
-    #else
     movi    a0, PS_INTLEVEL(5) | PS_UM | PS_WOE
-    #endif
     wsr     a0, PS
     rsync
 
@@ -1171,7 +1148,7 @@ _xt_medint5_exit:
     rsync                                   /* ensure EPS and EPC written */
     rfi     5
 
-    .text
+    .section .rwtext
     .type       _xt_medint6,@function
     .align      4
 _xt_medint6:
@@ -1193,11 +1170,7 @@ _xt_medint6:
     /* !! We are now on the RTOS system stack !! */
 
     /* Set up PS for C, enable interrupts above this level and clear EXCM. */
-    #ifdef __XTENSA_CALL0_ABI__
-    movi    a0, PS_INTLEVEL(6) | PS_UM
-    #else
     movi    a0, PS_INTLEVEL(6) | PS_UM | PS_WOE
-    #endif
     wsr     a0, PS
     rsync
 
@@ -1265,7 +1238,7 @@ documentation: "Microprocessor Programmer's Guide".
 */
 
 
-    .text
+    .section .rwtext
     .type       _xt_nmi,@function
     .align      4
 _xt_nmi:

@@ -77,3 +77,7 @@ unsafe extern "C" fn vApplicationStackOverflowHook(
 
     panic!("StackOverflow in task '{}'", task_name);
 }
+
+pub unsafe fn vPortYieldFromISR() {
+    crate::_frxt_setup_switch()
+}

@@ -30,7 +30,7 @@ impl BacktraceFrame {
             !(sp < (SOC_DRAM_LOW + 0x10) || sp > (SOC_DRAM_HIGH - 0x10))
         };
 
-        sp_in_dram && is_pointer_executable(self.pc as usize)
+        sp_in_dram// && is_pointer_executable(self.pc as usize)
     }
 }
 

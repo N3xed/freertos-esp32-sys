@@ -61,7 +61,7 @@ NOERROR: .error "C preprocessor needed for this file: make sure its filename\
 #include <xtensa/overlay_os_asm.h>
 #endif
 
-    .text
+    .section .rwtext
 
 /*******************************************************************************
 

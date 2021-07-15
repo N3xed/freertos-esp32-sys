@@ -51,7 +51,7 @@ port_IntStackTop:
 port_switch_flag:
     .word       0
 
-    .text
+    .section .rwtext
 /*
 *******************************************************************************
 * _frxt_setup_switch
@@ -179,13 +179,9 @@ _frxt_int_exit:
     s32i    a15, a1, XT_STK_A15
     #endif
 
-    #ifdef __XTENSA_CALL0_ABI__
-    call0   vPortYieldFromInt       /* call dispatch inside the function; never returns */
-    #else
     call4   vPortYieldFromInt       /* this one returns */
     call0   _frxt_dispatch          /* tail-call dispatcher */
     /* Never returns here. */
-    #endif
 
 .Lnoswitch:
     /*

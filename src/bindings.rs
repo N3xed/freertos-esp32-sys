@@ -3155,6 +3155,9 @@ extern "C" {
     pub fn vTaskExitCriticalFromISR(uxSavedInterruptStatus: UBaseType_t);
 }
 extern "C" {
+    pub fn xPortSchedulerRunning() -> BaseType_t;
+}
+extern "C" {
     pub fn vTaskEnterCritical();
 }
 extern "C" {

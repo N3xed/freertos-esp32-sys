@@ -93,6 +93,8 @@ extern size_t strlen(const char* str);
 extern UBaseType_t ulTaskEnterCriticalFromISR();
 extern void vTaskExitCriticalFromISR(UBaseType_t uxSavedInterruptStatus);
 
+extern BaseType_t xPortSchedulerRunning();
+
 /* Critical section management. NW-TODO: replace XTOS_SET_INTLEVEL with more efficient version, if any? */
 // These cannot be nested. They should be used with a lot of care and cannot be called from interrupt level.
 #define portDISABLE_INTERRUPTS()      do { XTOS_SET_INTLEVEL(XCHAL_EXCM_LEVEL); portbenchmarkINTERRUPT_DISABLE(); } while (0)
