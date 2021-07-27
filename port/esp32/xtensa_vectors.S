@@ -1,33 +1,26 @@
- /*
- * FreeRTOS Kernel <DEVELOPMENT BRANCH>
- * Copyright (C) 2015-2019 Cadence Design Systems, Inc.
- * Copyright (C) 2021 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
- *
- * SPDX-License-Identifier: MIT
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * https://www.FreeRTOS.org
- * https://github.com/FreeRTOS
- *
- */
+/*******************************************************************************
+Copyright (c) 2006-2015 Cadence Design Systems Inc.
 
-/*
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+--------------------------------------------------------------------------------
+
         XTENSA VECTORS AND LOW LEVEL HANDLERS FOR AN RTOS
 
   Xtensa low level exception and interrupt vectors and handlers for an RTOS.
@@ -97,13 +90,60 @@
 
  */
 
+#include "portmacro.h"
 #include "xtensa_rtos.h"
 
+/*
+  Define for workaround: pin no-cpu-affinity tasks to a cpu when fpu is used.
+  Please change this when the tcb structure is changed
+*/
+#define TASKTCB_CORE_AFFINITY_OFFSET (4 + portMPU_SETTINGS_SIZE)
+.extern pxCurrentTCBs
 
-/* Enable stack backtrace across exception/interrupt - see below */
+/*
+--------------------------------------------------------------------------------
+    In order for backtracing to be able to trace from the pre-exception stack
+    across to the exception stack (including nested interrupts), we need to create
+    a pseudo base-save area to make it appear like the exception dispatcher was
+    triggered by a CALL4 from the pre-exception code. In reality, the exception
+    dispatcher uses the same window as pre-exception code, and only CALL0s are
+    used within the exception dispatcher.
+
+    To create the pseudo base-save area, we need to store a copy of the pre-exception's
+    base save area (a0 to a4) below the exception dispatcher's SP. EXCSAVE_x will
+    be used to store a copy of the SP that points to the interrupted code's exception
+    frame just in case the exception dispatcher's SP does not point to the exception
+    frame (which is the case when switching from task to interrupt stack).
+
+    Clearing the pseudo base-save area is uncessary as the interrupt dispatcher
+    will restore the current SP to that of the pre-exception SP.
+--------------------------------------------------------------------------------
+*/
 #define XT_DEBUG_BACKTRACE    1
 
 
+
+
+/*
+  Macro get_percpu_entry_for - convert a per-core ID into a multicore entry.
+  Basically does reg=reg*configNUM_CORES+current_core_id
+  Multiple versions here to optimize for specific configNUM_CORES values.
+*/
+    .macro get_percpu_entry_for reg scratch
+#if (configNUM_CORES == 1)
+    /* No need to do anything */
+#elif  (configNUM_CORES == 2)
+    /* Optimized 2-core code. */
+    getcoreid \scratch
+    addx2 \reg,\reg,\scratch
+#else
+    /* Generalized n-core code. Untested! */
+    movi \scratch,configNUM_CORES
+    mull \scratch,\reg,\scratch
+    getcoreid \reg
+    add \reg,\scratch,\reg
+#endif
+   .endm
 /*
 --------------------------------------------------------------------------------
   Macro extract_msb - return the input with only the highest bit set.
@@ -140,13 +180,19 @@
 
   NOTE: For CALL0 ABI, a12-a15 have not yet been saved.
 
-  NOTE: This macro will use registers a0 and a2-a6. The arguments are:
+  NOTE: This macro will use registers a0 and a2-a7. The arguments are:
     level -- interrupt level
     mask  -- interrupt bitmask for this level
 --------------------------------------------------------------------------------
 */
 
     .macro  dispatch_c_isr    level  mask
+
+    #ifdef CONFIG_PM_TRACE
+    movi a6, 0 /* = ESP_PM_TRACE_IDLE */
+    getcoreid a7
+    call4 esp_pm_trace_exit
+    #endif // CONFIG_PM_TRACE
 
     /* Get mask of pending, enabled interrupts at this level into a2. */
 
@@ -183,13 +229,15 @@
     addx2   a0, a4, a0                      /* clear top bit -- simulating call4 size   */
     #endif
 
-    /* Now look up in the dispatch table and call user ISR if any. */
-    /* If multiple bits are set then MSB has highest priority.     */
+    // Jump to timer interrupt if this is a level 1 interrupt and it needs to be served
+    .ifeq XT_TIMER_INTPRI - \level
 
     extract_msb  a4, a2                     /* a4 = MSB of a2, a2 trashed */
 
     movi    a3, XT_TIMER_INTEN              /* a3 = timer interrupt bit */
     beq     a3, a4, 7f                      /* if timer interrupt then skip table */
+
+    .endif
 
     movi a6, \level
     mov a7, sp
@@ -208,8 +256,11 @@
     so no need to preserve any registers except a6 (vpri_mask).
     */
 
-    mov     a2, a6
+    #ifdef __XTENSA_CALL0_ABI__
+    call0   XT_RTOS_TIMER_INT
+    #else
     call4   XT_RTOS_TIMER_INT
+    #endif
     .endif
 
     j       .L_xt_user_int_&level&          /* check for more interrupts */
@@ -342,21 +393,45 @@ _NMIExceptionVector:
 */
 
     .section .rwtext
+#ifdef CONFIG_ESP32_IRAM_AS_8BIT_ACCESSIBLE_MEMORY
+    .global   LoadStoreErrorHandler
+    .global   AlignmentErrorHandler
+#endif
 
+
+    #if XCHAL_HAVE_WINDOWED
     .align      4
 _xt_to_alloca_exc:
     call0   _xt_alloca_exc                  /* in window vectors section */
     /* never returns here - call0 is used as a jump (see note at top) */
+    #endif
 
     .align      4
 _xt_to_syscall_exc:
     call0   _xt_syscall_exc
     /* never returns here - call0 is used as a jump (see note at top) */
 
+    #if XCHAL_CP_NUM > 0
     .align      4
 _xt_to_coproc_exc:
     call0   _xt_coproc_exc
     /* never returns here - call0 is used as a jump (see note at top) */
+    #endif
+
+#ifdef CONFIG_ESP32_IRAM_AS_8BIT_ACCESSIBLE_MEMORY
+    .align      4
+_call_loadstore_handler:
+    call0   LoadStoreErrorHandler
+    /* This will return only if wrong opcode or address out of range*/
+    j       .LS_exit
+
+    .align      4
+_call_alignment_handler:
+    call0   AlignmentErrorHandler
+    /* This will return only if wrong opcode or address out of range*/
+    addi    a0, a0, 1
+    j       .LS_exit
+#endif
 
 /*
 --------------------------------------------------------------------------------
@@ -369,18 +444,31 @@ _xt_to_coproc_exc:
 
 __user_exception_trampoline:
 
+    /* If level 1 interrupt then jump to the dispatcher */
+    rsr     a0, EXCCAUSE
+    beqi    a0, EXCCAUSE_LEVEL1INTERRUPT, _xt_lowint1
+
     /* Handle any coprocessor exceptions. Rely on the fact that exception
        numbers above EXCCAUSE_CP0_DISABLED all relate to the coprocessors.
     */
-    rsr     a0, EXCCAUSE
+    #if XCHAL_CP_NUM > 0
     bgeui   a0, EXCCAUSE_CP0_DISABLED, _xt_to_coproc_exc
-
-    /* If level 1 interrupt then jump to the dispatcher */
-    beqi    a0, EXCCAUSE_LEVEL1INTERRUPT, _xt_lowint1
+    #endif
 
     /* Handle alloca and syscall exceptions */
+    #if XCHAL_HAVE_WINDOWED
     beqi    a0, EXCCAUSE_ALLOCA,  _xt_to_alloca_exc
+    #endif
     beqi    a0, EXCCAUSE_SYSCALL, _xt_to_syscall_exc
+
+#ifdef CONFIG_ESP32_IRAM_AS_8BIT_ACCESSIBLE_MEMORY
+    beqi    a0, EXCCAUSE_LOAD_STORE_ERROR, _call_loadstore_handler
+
+    addi    a0, a0, -1
+    beqi    a0, 8, _call_alignment_handler
+    addi    a0, a0, 1
+.LS_exit:
+#endif
 
     /* Handle all other exceptions. All can have user-defined handlers. */
     /* NOTE: we'll stay on the user stack for exception handling.       */
@@ -693,7 +781,7 @@ _xt_coproc_mask:
     .type   _xt_coproc_owner_sa,@object
     .align  16,,XCHAL_CP_MAX<<2     /* minimize crossing cache boundaries */
 _xt_coproc_owner_sa:
-    .space  XCHAL_CP_MAX << 2
+    .space  (XCHAL_CP_MAX * configNUM_CORES) << 2
 
     .section .rwtext
 
@@ -751,15 +839,40 @@ _xt_coproc_exc:
     call0   XT_RTOS_CP_STATE                /* a15 = new owner's save area */
     beqz    a15, .L_goto_invalid            /* not in a thread (invalid) */
 
+
+    /* FPU operations are incompatible with non-pinned tasks. If we have a FPU operation
+       here, to keep the entire thing from crashing, it's better to pin the task to whatever
+       core we're running on now. */
+    movi    a2, pxCurrentTCBs
+    getcoreid a3
+    addx4     a2,  a3, a2
+    l32i    a2, a2, 0                       /* a2 = start of pxCurrentTCBs[cpuid] */
+    addi    a2, a2, TASKTCB_CORE_AFFINITY_OFFSET  /* offset to uxCoreAffinityMask in tcb struct */
+    addi    a4, a3, 1                       /* equivalent to (1 << coreid) */
+    s32i    a4, a2, 0                       /* store current cpuid */
+
     /* Enable the co-processor's bit in CPENABLE. */
     movi    a0, _xt_coproc_mask
     rsr     a4, CPENABLE                    /* a4 = CPENABLE */
     addx4   a0, a5, a0                      /* a0 = &_xt_coproc_mask[n] */
     l32i    a0, a0, 0                       /* a0 = (n << 16) | (1 << n) */
-    movi    a3, _xt_coproc_owner_sa     /* (placed here for load slot) */
+
+    /* Grab correct xt_coproc_owner_sa for this core */
+    movi    a2, XCHAL_CP_MAX << 2
+    mull    a2, a2, a3                      /* multiply by current processor id */
+    movi    a3, _xt_coproc_owner_sa         /* a3 = base of owner array */
+    add     a3, a3, a2                      /* a3 = owner area needed for this processor */
+
     extui   a2, a0, 0, 16                   /* coprocessor bitmask portion */
     or      a4, a4, a2                      /* a4 = CPENABLE | (1 << n) */
     wsr     a4, CPENABLE
+
+/* 
+Keep loading _xt_coproc_owner_sa[n] atomic (=load once, then use that value
+everywhere): _xt_coproc_release assumes it works like this in order not to need
+locking.
+*/
+
 
     /* Get old coprocessor owner thread (save area ptr) and assign new one.  */
     addx4   a3,  a5, a3                      /* a3 = &_xt_coproc_owner_sa[n] */

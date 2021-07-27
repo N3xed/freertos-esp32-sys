@@ -32,8 +32,7 @@
 #define TOPOFSTACK_OFFS                 0x00    /* StackType_t *pxTopOfStack */
 #define CP_TOPOFSTACK_OFFS              0x04    /* xMPU_SETTINGS.coproc_area */
 
-.extern pxCurrentTCB
-
+.extern pxCurrentTCBs
 
 /*
 *******************************************************************************
@@ -41,25 +40,29 @@
 * parameter "configISR_STACK_SIZE" in FreeRTOSConfig.h
 *******************************************************************************
 */
+
     .data
     .align      16
     .global     port_IntStack
+    .global     port_IntStackTop
+    .global     port_switch_flag
 port_IntStack:
-    .space      configISR_STACK_SIZE
+    .space      configISR_STACK_SIZE*configNUM_CORES		/* This allocates stacks for each individual CPU. */
 port_IntStackTop:
-    .word       0
+    .word		0
 port_switch_flag:
-    .word       0
+    .space      configNUM_CORES*4 /* One flag for each individual CPU. */
 
     .section .rwtext
+
 /*
 *******************************************************************************
 * _frxt_setup_switch
 * void _frxt_setup_switch(void);
-*
+* 
 * Sets an internal flag indicating that a task switch is required on return
 * from interrupt handling.
-*
+* 
 *******************************************************************************
 */
     .global     _frxt_setup_switch
@@ -69,16 +72,24 @@ _frxt_setup_switch:
 
     ENTRY(16)
 
+	getcoreid a3
     movi    a2, port_switch_flag
+	addx4	a2,  a3, a2
+
     movi    a3, 1
     s32i    a3, a2, 0
 
     RET(16)
 
+
+
+
+
+
 /*
 *******************************************************************************
-*                                            _frxt_int_enter
-*                                       void _frxt_int_enter(void)
+* _frxt_int_enter
+* void _frxt_int_enter(void)
 *
 * Implements the Xtensa RTOS porting layer's XT_RTOS_INT_ENTER function for
 * freeRTOS. Saves the rest of the interrupt context (not already saved).
@@ -108,30 +119,53 @@ _frxt_int_enter:
     Manage nesting directly rather than call the generic IntEnter()
     (in windowed ABI we can't call a C function here anyway because PS.EXCM is still set).
     */
-    movi    a2,  port_xSchedulerRunning
-    movi    a3,  port_interruptNesting
-    l32i    a2,  a2, 0                  /* a2 = port_xSchedulerRunning     */
+	getcoreid a4
+    movi    a2,  port_scheduler_running
+	addx4	a2,  a4, a2
+    movi    a3,  port_interrupt_nesting
+	addx4	a3,  a4, a3
+    l32i    a2,  a2, 0                  /* a2 = port_scheduler_running     */
     beqz    a2,  1f                     /* scheduler not running, no tasks */
-    l32i    a2,  a3, 0                  /* a2 = port_interruptNesting      */
+    l32i    a2,  a3, 0                  /* a2 = port_interrupt_nesting      */
     addi    a2,  a2, 1                  /* increment nesting count         */
     s32i    a2,  a3, 0                  /* save nesting count              */
     bnei    a2,  1, .Lnested            /* !=0 before incr, so nested      */
 
-    movi    a2,  pxCurrentTCB
+    movi    a2,  pxCurrentTCBs
+	addx4	a2,  a4, a2
     l32i    a2,  a2, 0                  /* a2 = current TCB                */
     beqz    a2,  1f
-    s32i    a1,  a2, TOPOFSTACK_OFFS    /* pxCurrentTCB->pxTopOfStack = SP */
-    movi    a1,  port_IntStackTop       /* a1 = top of intr stack          */
+    s32i    a1,  a2, TOPOFSTACK_OFFS    /* pxCurrentTCBs->pxTopOfStack = SP */
+    movi    a1,  port_IntStack+configISR_STACK_SIZE   /* a1 = top of intr stack for CPU 0  */
+    movi    a2,  configISR_STACK_SIZE   /* add configISR_STACK_SIZE * cpu_num to arrive at top of stack for cpu_num */
+	mull	a2,  a4, a2
+	add     a1,  a1, a2					/* for current proc */
+
+    #ifdef CONFIG_FREERTOS_FPU_IN_ISR
+    #if XCHAL_CP_NUM > 0
+    rsr     a3, CPENABLE                /* Restore thread scope CPENABLE */
+    addi    sp, sp,-4                   /* ISR will manage FPU coprocessor by forcing */
+    s32i    a3, a1, 0                   /* its trigger */
+    #endif
+    #endif
 
 .Lnested:
 1:
+    #ifdef CONFIG_FREERTOS_FPU_IN_ISR
+    #if XCHAL_CP_NUM > 0
+    movi    a3,  0              /* whilst ISRs pending keep CPENABLE exception active */
+    wsr     a3,  CPENABLE
+    rsync
+    #endif
+    #endif
+
     mov     a0,  a12                    /* restore return addr and return  */
     ret
 
 /*
 *******************************************************************************
-*                                            _frxt_int_exit
-*                                       void _frxt_int_exit(void)
+* _frxt_int_exit
+* void _frxt_int_exit(void)
 *
 * Implements the Xtensa RTOS porting layer's XT_RTOS_INT_EXIT function for
 * FreeRTOS. If required, calls vPortYieldFromInt() to perform task context
@@ -148,22 +182,36 @@ _frxt_int_enter:
     .align  4
 _frxt_int_exit:
 
-    movi    a2,  port_xSchedulerRunning
-    movi    a3,  port_interruptNesting
+	getcoreid a4
+    movi    a2,  port_scheduler_running
+	addx4	a2,  a4, a2
+    movi    a3,  port_interrupt_nesting
+	addx4	a3,  a4, a3
     rsil    a0,  XCHAL_EXCM_LEVEL       /* lock out interrupts             */
-    l32i    a2,  a2, 0                  /* a2 = port_xSchedulerRunning     */
+    l32i    a2,  a2, 0                  /* a2 = port_scheduler_running     */
     beqz    a2,  .Lnoswitch             /* scheduler not running, no tasks */
-    l32i    a2,  a3, 0                  /* a2 = port_interruptNesting      */
+    l32i    a2,  a3, 0                  /* a2 = port_interrupt_nesting      */
     addi    a2,  a2, -1                 /* decrement nesting count         */
     s32i    a2,  a3, 0                  /* save nesting count              */
     bnez    a2,  .Lnesting              /* !=0 after decr so still nested  */
 
-    movi    a2,  pxCurrentTCB
+    #ifdef CONFIG_FREERTOS_FPU_IN_ISR 
+    #if XCHAL_CP_NUM > 0
+    l32i    a3,  sp, 0                  /* Grab last CPENABLE before leave ISR */
+    addi    sp,  sp, 4
+    wsr     a3, CPENABLE
+    rsync                               /* ensure CPENABLE was modified */
+    #endif
+    #endif
+
+    movi    a2,  pxCurrentTCBs
+	addx4	a2,  a4, a2
     l32i    a2,  a2, 0                  /* a2 = current TCB                */
     beqz    a2,  1f                     /* no task ? go to dispatcher      */
-    l32i    a1,  a2, TOPOFSTACK_OFFS    /* SP = pxCurrentTCB->pxTopOfStack */
+    l32i    a1,  a2, TOPOFSTACK_OFFS    /* SP = pxCurrentTCBs->pxTopOfStack */
 
     movi    a2,  port_switch_flag       /* address of switch flag          */
+	addx4	a2,  a4, a2					/* point to flag for this cpu      */
     l32i    a3,  a2, 0                  /* a3 = port_switch_flag           */
     beqz    a3,  .Lnoswitch             /* flag = 0 means no switch reqd   */
     movi    a3,  0
@@ -179,9 +227,13 @@ _frxt_int_exit:
     s32i    a15, a1, XT_STK_A15
     #endif
 
+    #ifdef __XTENSA_CALL0_ABI__
+    call0   vPortYieldFromInt       /* call dispatch inside the function; never returns */
+    #else
     call4   vPortYieldFromInt       /* this one returns */
     call0   _frxt_dispatch          /* tail-call dispatcher */
     /* Never returns here. */
+    #endif
 
 .Lnoswitch:
     /*
@@ -246,6 +298,12 @@ _frxt_timer_int:
 
     ENTRY(16)
 
+    #ifdef CONFIG_PM_TRACE
+    movi a6, 1 /* = ESP_PM_TRACE_TICK */
+    getcoreid a7
+    call4 esp_pm_trace_enter
+    #endif // CONFIG_PM_TRACE
+
 .L_xt_timer_int_catchup:
 
     /* Update the timer comparator for the next tick. */
@@ -284,6 +342,12 @@ _frxt_timer_int:
     rsr     a4, CCOUNT                  /* a4 = cycle count                   */
     sub     a4, a4, a3                  /* diff = ccount - old comparator     */
     blt     a2, a4, .L_xt_timer_int_catchup  /* repeat while diff > divisor */
+
+#ifdef CONFIG_PM_TRACE
+    movi a6, 1 /* = ESP_PM_TRACE_TICK */
+    getcoreid a7
+    call4 esp_pm_trace_exit
+#endif // CONFIG_PM_TRACE
 
     RET(16)
 
@@ -346,7 +410,7 @@ _frxt_tick_timer_init:
 * If restoring a task that was preempted, restores all state including the task's CPENABLE.
 *
 * Entry:
-*   pxCurrentTCB  points to the TCB of the task to suspend,
+*   pxCurrentTCBs  points to the TCB of the task to suspend,
 *   Because it is tail-called without a true function entrypoint, it needs no 'entry' instruction.
 *
 * Exit:
@@ -361,11 +425,16 @@ _frxt_tick_timer_init:
 _frxt_dispatch:
 
     #ifdef __XTENSA_CALL0_ABI__
+    #error Not implemented
     call0   vTaskSwitchContext  // Get next TCB to resume
-    movi    a2, pxCurrentTCB
+    movi    a2, pxCurrentTCBs
+	addx4	a2,  a3, a2
     #else
-    movi    a2, pxCurrentTCB
+	getcoreid a3
+    mov a6, a3 // xCoreID argument
     call4   vTaskSwitchContext  // Get next TCB to resume
+    movi    a2, pxCurrentTCBs
+	addx4	a2,  a3, a2
     #endif
     l32i    a3,  a2, 0
     l32i    sp,  a3, TOPOFSTACK_OFFS     /* SP = next_TCB->pxTopOfStack;  */
@@ -403,10 +472,12 @@ _frxt_dispatch:
 
     #if XCHAL_CP_NUM > 0
     /* Restore CPENABLE from task's co-processor save area. */
-    movi    a3, pxCurrentTCB            /* cp_state =                       */
+    movi    a3, pxCurrentTCBs            /* cp_state =                       */
+	getcoreid a2
+	addx4	a3,  a2, a3
     l32i    a3, a3, 0
     l32i    a2, a3, CP_TOPOFSTACK_OFFS     /* StackType_t                       *pxStack; */
-    l16ui    a3, a2, XT_CPENABLE         /* CPENABLE = cp_state->cpenable;   */
+    l16ui   a3, a2, XT_CPENABLE         /* CPENABLE = cp_state->cpenable;   */
     wsr     a3, CPENABLE
     #endif
 
@@ -442,7 +513,7 @@ _frxt_dispatch:
 * then tail-calls the dispatcher _frxt_dispatch() to perform the actual context switch
 *
 * At Entry:
-*   pxCurrentTCB  points to the TCB of the task to suspend
+*   pxCurrentTCBs  points to the TCB of the task to suspend
 *   Callable from C (obeys ABI conventions on entry).
 *
 * Does not return to caller.
@@ -490,19 +561,21 @@ vPortYield:
     call0   _xt_coproc_savecs
     #endif
 
-    movi    a2,  pxCurrentTCB
+    movi    a2,  pxCurrentTCBs
+	getcoreid a3
+	addx4	a2,  a3, a2
+    l32i    a2,  a2, 0                  /* a2 = pxCurrentTCBs                */
     movi    a3,  0
-    l32i    a2,  a2, 0                  /* a2 = pxCurrentTCB                */
     s32i    a3,  sp, XT_SOL_EXIT        /* 0 to flag as solicited frame     */
-    s32i    sp,  a2, TOPOFSTACK_OFFS    /* pxCurrentTCB->pxTopOfStack = SP  */
+    s32i    sp,  a2, TOPOFSTACK_OFFS    /* pxCurrentTCBs->pxTopOfStack = SP  */
 
     #if XCHAL_CP_NUM > 0
     /* Clear CPENABLE, also in task's co-processor state save area. */
-    l32i    a2,  a2, CP_TOPOFSTACK_OFFS /* a2 = pxCurrentTCB->cp_state      */
+    l32i    a2,  a2, CP_TOPOFSTACK_OFFS /* a2 = pxCurrentTCBs->cp_state      */
     movi    a3,  0
     wsr     a3,  CPENABLE
     beqz    a2,  1f
-    s16i     a3,  a2, XT_CPENABLE        /* clear saved cpenable             */
+    s16i    a3,  a2, XT_CPENABLE        /* clear saved cpenable             */
 1:
     #endif
 
@@ -520,8 +593,8 @@ vPortYield:
 * _frxt_dispatch() to perform the actual context switch.
 *
 * At Entry:
-*   Interrupted task context has been saved in an interrupt stack frame at pxCurrentTCB->pxTopOfStack.
-*   pxCurrentTCB  points to the TCB of the task to suspend,
+*   Interrupted task context has been saved in an interrupt stack frame at pxCurrentTCBs->pxTopOfStack.
+*   pxCurrentTCBs  points to the TCB of the task to suspend,
 *   Callable from C (obeys ABI conventions on entry).
 *
 * At Exit:
@@ -539,12 +612,15 @@ vPortYieldFromInt:
 
     #if XCHAL_CP_NUM > 0
     /* Save CPENABLE in task's co-processor save area, and clear CPENABLE.  */
-    movi    a3, pxCurrentTCB            /* cp_state =                       */
+    movi    a3, pxCurrentTCBs            /* cp_state =                       */
+	getcoreid a2
+	addx4	a3,  a2, a3
     l32i    a3, a3, 0
+
     l32i    a2, a3, CP_TOPOFSTACK_OFFS
 
     rsr     a3, CPENABLE
-    s16i     a3, a2, XT_CPENABLE         /* cp_state->cpenable = CPENABLE;   */
+    s16i    a3, a2, XT_CPENABLE         /* cp_state->cpenable = CPENABLE;   */
     movi    a3, 0
     wsr     a3, CPENABLE                /* disable all co-processors        */
     #endif
@@ -578,14 +654,22 @@ vPortYieldFromInt:
     .align  4
 _frxt_task_coproc_state:
 
-    movi    a15, port_xSchedulerRunning /* if (port_xSchedulerRunning              */
+
+	/* We can use a3 as a scratchpad, the instances of code calling XT_RTOS_CP_STATE don't seem to need it saved. */
+	getcoreid a3
+    movi    a15, port_scheduler_running /* if (port_scheduler_running              */
+	addx4	a15, a3,a15
     l32i    a15, a15, 0
     beqz    a15, 1f
-    movi    a15, port_interruptNesting  /* && port_interruptNesting == 0           */
+    movi    a15, port_interrupt_nesting  /* && port_interrupt_nesting == 0           */
+	addx4	a15, a3, a15
     l32i    a15, a15, 0
     bnez    a15, 1f
-    movi    a15, pxCurrentTCB
-    l32i    a15, a15, 0                 /* && pxCurrentTCB != 0) {                 */
+
+    movi    a15, pxCurrentTCBs
+	addx4	a15, a3, a15
+    l32i    a15, a15, 0                 /* && pxCurrentTCBs != 0) {                 */
+
     beqz    a15, 2f
     l32i    a15, a15, CP_TOPOFSTACK_OFFS
     ret

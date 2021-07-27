@@ -12,6 +12,7 @@ categories = ["embedded", "no-std", "api-bindings"]
 
 [dependencies]
 chlorine = "1.0"
+spin = { version = "0.9", default-features = false, features = ["spin_mutex"]}
 
 [features]
 default = ["use-rust-alloc"]

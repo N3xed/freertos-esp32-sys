@@ -1,4 +1,11 @@
+use core::{
+    sync::atomic::{AtomicI32, Ordering},
+};
+
 use chlorine::c_char;
+use spin::mutex::{SpinMutex, SpinMutexGuard};
+
+use crate::{vTaskEnterCritical, vTaskExitCritical, UBaseType_t};
 
 #[cfg(feature = "use-rust-alloc")]
 mod malloc_impl {
@@ -78,6 +85,107 @@ unsafe extern "C" fn vApplicationStackOverflowHook(
     panic!("StackOverflow in task '{}'", task_name);
 }
 
+#[inline]
 pub unsafe fn vPortYieldFromISR() {
     crate::_frxt_setup_switch()
+}
+
+#[inline]
+pub unsafe fn ulTaskEnterCriticalFromISR() -> UBaseType_t {
+    let mut state: UBaseType_t;
+    llvm_asm!("rsr.ps $0" : "=a"(state) :: "memory");
+    vTaskEnterCritical();
+
+    state
+}
+
+#[inline]
+pub unsafe fn vTaskExitCriticalFromISR(previous_state: UBaseType_t) {
+    vTaskExitCritical();
+    llvm_asm!("wsr.ps $0" :: "r"(previous_state) : "memory")
+}
+
+#[inline]
+pub fn portGET_CORE_ID() -> UBaseType_t {
+    let mut id: u32;
+    unsafe {
+        llvm_asm!(r#"rsr.prid $0;
+              extui $0, $0, 13, 1"# : "=r"(id));
+    }
+    id
+}
+
+static ISR_LOCK: (SpinMutex<usize>, AtomicI32) = (SpinMutex::new(0), AtomicI32::new(-1));
+static TASK_LOCK: (SpinMutex<usize>, AtomicI32) = (SpinMutex::new(0), AtomicI32::new(-1));
+
+#[link_section = ".rwtext"]
+pub fn take_lock_recursive((lock, owner): &(SpinMutex<usize>, AtomicI32)) {
+    let core_id = portGET_CORE_ID() as i32;
+
+    let w = if owner.load(Ordering::Relaxed) == core_id {
+        // Safe because we checked that this core already owns the lock.
+        let w = unsafe { &mut *lock.as_mut_ptr() };
+
+        w
+    } else {
+        // Wait for the other core to unlock the mutex.
+        let l = lock.lock();
+        owner.store(core_id, Ordering::Relaxed);
+
+        // Keep the mutex locked, it will be unlocked in `give_lock_recursive`.
+        SpinMutexGuard::leak(l)
+    };
+
+    // Increment the lock count.
+    *w += 1;
+}
+
+#[link_section = ".rwtext"]
+pub fn give_lock_recursive((lock, owner): &(SpinMutex<usize>, AtomicI32)) {
+    let core_id = portGET_CORE_ID() as i32;
+
+    // The current core should always own the lock on a call to this function.
+    debug_assert!(owner.load(Ordering::Relaxed) == core_id);
+
+    // Safe because this core owns the lock (see assert above).
+    let w = unsafe { &mut *lock.as_mut_ptr() };
+    let count = *w - 1;
+    *w = count;
+
+    // Unlock the mutex because the count is zero.
+    if count == 0 {
+        // `-1` signals an unowned lock.
+        // Note this MUST happen before the lock is unlocked, otherwise it causes a race
+        // condition in `take_lock_recursive()`.
+        owner.store(-1, Ordering::Relaxed);
+
+        // Safe because this core owns the lock and the lock count is 0.
+        unsafe {
+            lock.force_unlock();
+        }
+    }
+}
+
+#[no_mangle]
+#[link_section = ".rwtext"]
+pub extern "C" fn vPortTakeISRLock() {
+    take_lock_recursive(&ISR_LOCK);
+}
+
+#[no_mangle]
+#[link_section = ".rwtext"]
+pub extern "C" fn vPortGiveISRLock() {
+    give_lock_recursive(&ISR_LOCK);
+}
+
+#[no_mangle]
+#[link_section = ".rwtext"]
+pub extern "C" fn vPortTakeTaskLock() {
+    take_lock_recursive(&TASK_LOCK);
+}
+
+#[no_mangle]
+#[link_section = ".rwtext"]
+pub extern "C" fn vPortGiveTaskLock() {
+    give_lock_recursive(&TASK_LOCK);
 }

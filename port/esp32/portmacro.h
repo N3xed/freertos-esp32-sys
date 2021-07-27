@@ -5,22 +5,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -30,197 +31,230 @@
 #ifndef PORTMACRO_H
 #define PORTMACRO_H
 
-#ifdef __cplusplus
-extern "C" {
+/* Architecture specifics. These can be used by assembly files as well. */
+#define portSTACK_GROWTH            (-1)
+#define portBYTE_ALIGNMENT          4
+#define portCRITICAL_NESTING_IN_TCB 1
+#ifndef configNUM_CORES
+#define configNUM_CORES 2
 #endif
+// Needed for core pinning when coprocessors are used.
+#define configUSE_CORE_AFFINITY 1
+#define portINTLEVEL_HIGHINT    5
+#define portMPU_SETTINGS_SIZE   4
 
 #ifndef __ASSEMBLER__
 
 #include <stdint.h>
 
 // #include <xtensa/tie/xt_core.h>
-#include <xtensa/hal.h>
 #include <xtensa/config/core.h>
-#include <xtensa/config/system.h>	/* required for XSHAL_CLIB */
-    
+#include <xtensa/config/system.h> /* required for XSHAL_CLIB */
+#include <xtensa/hal.h>
+
 #ifdef STRUCT_FIELD
 #undef STRUCT_FIELD
 #endif
 #ifdef STRUCT_AFIELD
 #undef STRUCT_AFIELD
 #endif
-#include <xtensa/xtruntime.h>
 #include "xtensa_context.h"
+#include <xtensa/xtruntime.h>
 
-/*-----------------------------------------------------------
- * Port specific definitions.
- *
- * The settings in this file configure FreeRTOS correctly for the
- * given hardware and compiler.
- *
- * These settings should not be altered.
- *-----------------------------------------------------------
- */
+// #ifdef STRUCT_FIELD
+// #undef STRUCT_FIELD
+// #endif
+// #include "xtensa_context.h"
 
-/* Type definitions. */
+// Function / variable declarations
 
-#define portCHAR		int8_t
-#define portFLOAT		float
-#define portDOUBLE		double
-#define portLONG		int32_t
-#define portSHORT		int16_t
-#define portSTACK_TYPE	uint32_t
-#define portBASE_TYPE	int
+size_t strlen(const char *str);
 
-typedef portSTACK_TYPE			StackType_t;
-typedef portBASE_TYPE			BaseType_t;
-typedef unsigned portBASE_TYPE	UBaseType_t;
+void _frxt_setup_switch(void);
+void _xt_coproc_release(volatile uint32_t *coproc_area);
+void _xt_coproc_init(void);
 
-#if( configUSE_16_BIT_TICKS == 1 )
-	typedef uint16_t TickType_t;
-	#define portMAX_DELAY  0xffff
-#else
-	typedef uint32_t TickType_t;
-	#define portMAX_DELAY  0xffffffffUL
-#endif
-/*-----------------------------------------------------------*/
+void vPortYieldCore(int xOtherCoreID);
+void vPortYield(void);
 
-// portbenchmark
-#include "portbenchmark.h"
-
-extern void vPortPanic(const char* file, size_t file_len, size_t line, const char* func, size_t func_len);
-extern size_t strlen(const char* str);
-extern UBaseType_t ulTaskEnterCriticalFromISR();
-extern void vTaskExitCriticalFromISR(UBaseType_t uxSavedInterruptStatus);
-
-extern BaseType_t xPortSchedulerRunning();
-
-/* Critical section management. NW-TODO: replace XTOS_SET_INTLEVEL with more efficient version, if any? */
-// These cannot be nested. They should be used with a lot of care and cannot be called from interrupt level.
-#define portDISABLE_INTERRUPTS()      do { XTOS_SET_INTLEVEL(XCHAL_EXCM_LEVEL); portbenchmarkINTERRUPT_DISABLE(); } while (0)
-#define portENABLE_INTERRUPTS()       do { portbenchmarkINTERRUPT_RESTORE(0); XTOS_SET_INTLEVEL(0); } while (0)
-
-// These can be nested
-#define portCRITICAL_NESTING_IN_TCB 1  // For now, let FreeRTOS' (tasks.c) manage critical nesting
 void vTaskEnterCritical(void);
 void vTaskExitCritical(void);
-#define portENTER_CRITICAL()        vTaskEnterCritical()
-#define portEXIT_CRITICAL()         vTaskExitCritical()
 
-// Cleaner and preferred solution allows nested interrupts disabling and restoring via local registers or stack.
-// They can be called from interrupts too.
-static inline unsigned portENTER_CRITICAL_NESTED() { unsigned state = XTOS_SET_INTLEVEL(XCHAL_EXCM_LEVEL); portbenchmarkINTERRUPT_DISABLE(); return state; }
-#define portEXIT_CRITICAL_NESTED(state)   do { portbenchmarkINTERRUPT_RESTORE(state); __asm__ volatile("WSR.PS %0" : : "r"(state): "memory"); } while (0)
+void vPortTakeISRLock(void);
+void vPortGiveISRLock(void);
+void vPortTakeTaskLock(void);
+void vPortGiveTaskLock(void);
 
-// These FreeRTOS versions are similar to the nested versions above
-#define portSET_INTERRUPT_MASK_FROM_ISR()            portENTER_CRITICAL_NESTED()
-#define portCLEAR_INTERRUPT_MASK_FROM_ISR(state)     portEXIT_CRITICAL_NESTED(state)
+extern volatile uint32_t port_scheduler_running[configNUM_CORES];
+extern volatile uint32_t port_interrupt_nesting[configNUM_CORES];
 
-/*-----------------------------------------------------------*/
+// Type definitions
 
-/* Architecture specifics. */
-#define portSTACK_GROWTH			( -1 )
-#define portTICK_PERIOD_MS			( ( TickType_t ) 1000 / configTICK_RATE_HZ )
-#define portBYTE_ALIGNMENT			4
-#define portNOP()					XT_NOP()
-/*-----------------------------------------------------------*/
+#define portSTACK_TYPE uint32_t
+typedef portSTACK_TYPE StackType_t;
+typedef int32_t BaseType_t;
+typedef uint32_t UBaseType_t;
 
-/* Fine resolution time */
-#define portGET_RUN_TIME_COUNTER_VALUE()  xthal_get_ccount()
+#if (configUSE_16_BIT_TICKS == 1)
+typedef uint16_t TickType_t;
+#define portMAX_DELAY 0xffff
+#else
+typedef uint32_t TickType_t;
+#define portMAX_DELAY           0xffffffffUL
 
-/* Kernel utilities. */
-void vPortYield( void );
-void _frxt_setup_switch( void );
-#define portYIELD()       vPortYield()
-#define portYIELD_FROM_ISR( xHigherPriorityTaskWoken )	\
-	if ( ( xHigherPriorityTaskWoken ) != 0 ) {	\
-		_frxt_setup_switch();			\
-	}
-
-/*-----------------------------------------------------------*/
-
-/* Task function macros as described on the FreeRTOS.org WEB site. */
-#define portTASK_FUNCTION_PROTO( vFunction, pvParameters ) void vFunction( void *pvParameters )
-#define portTASK_FUNCTION( vFunction, pvParameters ) void vFunction( void *pvParameters )
-
-// When coprocessors are defined, we to maintain a pointer to coprocessors area.
-// We currently use a hack: redefine field xMPU_SETTINGS in TCB block as a structure that can hold:
-// MPU wrappers, coprocessor area pointer, trace code structure, and more if needed.
-// The field is normally used for memory protection. FreeRTOS should create another general purpose field.
-typedef struct {
-	#if XCHAL_CP_NUM > 0
-	volatile StackType_t* coproc_area; // Pointer to coprocessor save area; MUST BE FIRST
-	#endif
-
-	#if portUSING_MPU_WRAPPERS
-	// Define here mpu_settings, which is port dependent
-	int mpu_setting; // Just a dummy example here; MPU not ported to Xtensa yet
-	#endif
-
-	#if configUSE_TRACE_FACILITY_2
-	struct {
-		// Cf. porttraceStamp()
-		int taskstamp;        /* Stamp from inside task to see where we are */
-		int taskstampcount;   /* A counter usually incremented when we restart the task's loop */
-	} porttrace;
-	#endif
-} xMPU_SETTINGS;
-
-// Main hack to use MPU_wrappers even when no MPU is defined (warning: mpu_setting should not be accessed; otherwise move this above xMPU_SETTINGS)
-#if (XCHAL_CP_NUM > 0 || configUSE_TRACE_FACILITY_2) && !portUSING_MPU_WRAPPERS   // If MPU wrappers not used, we still need to allocate coproc area
-	#undef portUSING_MPU_WRAPPERS
-	#define portUSING_MPU_WRAPPERS 1   // Enable it to allocate coproc area
-	#define MPU_WRAPPERS_H             // Override mpu_wrapper.h to disable unwanted code
-	#define PRIVILEGED_FUNCTION
-	#define PRIVILEGED_DATA
+// 32-bit tick type on a 32-bit architecture, so reads of the tick count do
+// not need to be guarded with a critical section.
+#define portTICK_TYPE_IS_ATOMIC 1
 #endif
 
-// porttrace
-#if configUSE_TRACE_FACILITY_2
-#include "porttrace.h"
-#endif
+#define portTICK_PERIOD_MS ((TickType_t)1000 / configTICK_RATE_HZ)
 
-// configASSERT_2 if requested
-#if configASSERT_2
-#include <stdio.h>
-void exit(int);
-#define configASSERT( x )   if (!(x)) { porttracePrint(-1); printf("\nAssertion failed in %s:%d\n", __FILE__, __LINE__); exit(-1); }
-#endif
+/* Scheduler utilities. */
+#define portYIELD() vPortYield()
+#define portNOP()   XT_NOP()
 
-
-/* C library support -- only XCLIB and NEWLIB are supported. */
-
-/* To enable thread-safe C library support, XT_USE_THREAD_SAFE_CLIB must be
-   defined to be > 0 somewhere above or on the command line. */
-
-#if (XT_USE_THREAD_SAFE_CLIB > 0u) && (XSHAL_CLIB == XTHAL_CLIB_XCLIB)
-extern void vPortClibInit(void);
-
-// No cleanup necessary at this time.
-#define portCLEAN_UP_TCB(pxTCB)
-#endif // XCLIB support
-
-#if (XT_USE_THREAD_SAFE_CLIB > 0u) && (XSHAL_CLIB == XTHAL_CLIB_NEWLIB)
-extern void vPortClibInit(void);
-
-// This C library cleanup is not currently done by FreeRTOS when deleting a task
-#include <stdio.h>
-#define portCLEAN_UP_TCB(pxTCB)   vPortCleanUpTcbClib(&((pxTCB)->xNewLib_reent))
-static inline void vPortCleanUpTcbClib(struct _reent *ptr)
-{
-    FILE * fp = &(ptr->__sf[0]);
-    int i;
-    for (i = 0; i < 3; ++i, ++fp) {
-        fp->_close = NULL;
+static inline void portYIELD_FROM_ISR(BaseType_t xSwitchRequired) {
+    if (xSwitchRequired) {
+        _frxt_setup_switch();
     }
 }
-#endif // NEWLIB support
 
-#endif // __ASSEMBLER__
-
-#ifdef __cplusplus
+/* SMP utilities. */
+static inline BaseType_t portGET_CORE_ID() {
+    BaseType_t id;
+    asm volatile("rsr.prid %0\n\t"
+                 "extui %0,%0,13,1"
+                 : "=r"(id));
+    return id;
 }
+#define portYIELD_CORE(x) vPortYieldCore(x)
+
+/* Architecture specific optimisations. */
+#ifndef configUSE_PORT_OPTIMISED_TASK_SELECTION
+#define configUSE_PORT_OPTIMISED_TASK_SELECTION 0
+
+// When coprocessors are defined, we to maintain a pointer to coprocessors area.
+// We currently use a hack: redefine field xMPU_SETTINGS in TCB block as a
+// structure that can hold: MPU wrappers, coprocessor area pointer, trace code
+// structure, and more if needed. The field is normally used for memory
+// protection. FreeRTOS should create another general purpose field.
+typedef struct {
+#if XCHAL_CP_NUM > 0
+    // Pointer to coprocessor save area; MUST BE FIRST
+    volatile StackType_t *coproc_area;
 #endif
 
-#endif /* PORTMACRO_H */
+#if portUSING_MPU_WRAPPERS
+    // Define here mpu_settings, which is port dependent
+#error Not implemented
+#endif
+} __attribute__((packed)) xMPU_SETTINGS;
 
+// Main hack to use MPU_wrappers even when no MPU is defined (warning:
+// mpu_setting should not be accessed; otherwise move this above xMPU_SETTINGS)
+#if (XCHAL_CP_NUM > 0) && !portUSING_MPU_WRAPPERS // If MPU wrappers not used, we still
+                                                  // need to allocate coproc area
+#undef portUSING_MPU_WRAPPERS
+#define portUSING_MPU_WRAPPERS 1 // Enable it to allocate coproc area
+#define MPU_WRAPPERS_H           // Override mpu_wrapper.h to disable unwanted code
+#define PRIVILEGED_FUNCTION
+#define PRIVILEGED_DATA
+#endif
+#endif
+
+#if configUSE_PORT_OPTIMISED_TASK_SELECTION == 1
+
+/* Store/clear the ready priorities in a bit map. */
+#define portRECORD_READY_PRIORITY(uxPriority, uxReadyPriorities)                         \
+    (uxReadyPriorities) |= (1UL << (uxPriority))
+#define portRESET_READY_PRIORITY(uxPriority, uxReadyPriorities)                          \
+    (uxReadyPriorities) &= ~(1UL << (uxPriority))
+
+#define portGET_HIGHEST_PRIORITY(uxTopPriority, uxReadyPriorities)                       \
+    uxTopPriority = (31UL - (uint32_t)__builtin_clz(uxReadyPriorities))
+
+#endif /* configUSE_PORT_OPTIMISED_TASK_SELECTION */
+
+// Critical section management.
+
+/*
+ * This differs from the standard portDISABLE_INTERRUPTS()
+ * in that it also returns what the interrupt state was
+ * before it disabling interrupts.
+ */
+#define portDISABLE_INTERRUPTS() XTOS_SET_INTLEVEL(portINTLEVEL_HIGHINT)
+
+#define portENABLE_INTERRUPTS() XTOS_SET_INTLEVEL(0)
+
+/*
+ * Will restore the interrupt mask to the ulState obtained from
+ * `portDISABLE_INTERRUPTS()`.
+ */
+static inline void portRESTORE_INTERRUPTS(UBaseType_t ulState) {
+    asm volatile("WSR.PS %0" : : "r"(ulState) : "memory");
+}
+
+/*
+ * Returns non-zero if currently running in an
+ * ISR or otherwise in kernel mode.
+ */
+static inline BaseType_t portCHECK_IF_IN_ISR() {
+    BaseType_t status = portDISABLE_INTERRUPTS();
+    BaseType_t in_interrupt = port_interrupt_nesting[portGET_CORE_ID()] != 0;
+    portRESTORE_INTERRUPTS(status);
+    return in_interrupt;
+}
+
+#define portASSERT_IF_IN_ISR() configASSERT(portCHECK_IF_IN_ISR() == 0)
+
+#define portGET_ISR_LOCK()      vPortTakeISRLock()
+#define portRELEASE_ISR_LOCK()  vPortGiveISRLock()
+#define portGET_TASK_LOCK()     vPortTakeTaskLock()
+#define portRELEASE_TASK_LOCK() vPortGiveTaskLock()
+
+#define portENTER_CRITICAL() vTaskEnterCritical()
+#define portEXIT_CRITICAL()  vTaskExitCritical()
+
+/*
+ * vTaskEnterCritical() has been modified to be safe to use
+ * from within ISRs. Returns the current interrupt mask.
+ */
+static inline UBaseType_t portSET_INTERRUPT_MASK_FROM_ISR() {
+    UBaseType_t mask = portDISABLE_INTERRUPTS();
+    vTaskEnterCritical();
+    return mask;
+}
+
+/*
+ * vTaskExitCritical() has been modified to be safe to use
+ * from within ISRs.
+ */
+static inline void portCLEAR_INTERRUPT_MASK_FROM_ISR(UBaseType_t x) {
+    vTaskExitCritical();
+    portRESTORE_INTERRUPTS(x);
+}
+
+/* Runtime stats support */
+#if (configGENERATE_RUN_TIME_STATS == 1)
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() /* nothing needed here */
+#define portGET_RUN_TIME_COUNTER_VALUE()         xthal_get_ccount()
+#endif
+
+/* Maps sprintf and snprintf to the lite version in lib_rtos_support */
+#if (configUSE_DEBUG_SPRINTF == 1)
+#define sprintf(...)  rtos_sprintf(__VA_ARGS__)
+#define snprintf(...) rtos_snprintf(__VA_ARGS__)
+#endif
+
+#define portTIMER_CALLBACK_ATTRIBUTE
+
+/* Task function macros as described on the FreeRTOS.org WEB site.  These are
+not necessary for to use this port.  They are defined so the common demo files
+(which build with all the ports) will build. */
+#define portTASK_FUNCTION_PROTO(vFunction, pvParameters)                                 \
+    void vFunction(void *pvParameters)
+#define portTASK_FUNCTION(vFunction, pvParameters) void vFunction(void *pvParameters)
+
+#endif /* __ASSEMBLER__ */
+
+#endif /* PORTMACRO_H */
