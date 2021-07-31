@@ -99,12 +99,7 @@ StackType_t *pxPortInitialiseStack(StackType_t *pxTopOfStack,
  */
 /* Also set entry point argument parameter. */
 #ifdef __XTENSA_CALL0_ABI__
-#if CONFIG_FREERTOS_TASK_FUNCTION_WRAPPER
-    frame->a2 = (UBaseType_t)pxCode;
-    frame->a3 = (UBaseType_t)pvParameters;
-#else
     frame->a2 = (UBaseType_t)pvParameters;
-#endif
     frame->ps = PS_UM | PS_EXCM;
 #else
     /* + for windowed ABI also set WOE and CALLINC (pretend task was 'call4'd).
